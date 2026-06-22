@@ -1,0 +1,24 @@
+# Render Blueprint — tek tıkla web servisi + PostgreSQL
+# https://render.com → New → Blueprint → bu repo
+services:
+  - type: web
+    name: ahk-terminal
+    runtime: docker
+    plan: free
+    dockerfilePath: ./Dockerfile
+    healthCheckPath: /health
+    envVars:
+      - key: FINNHUB_API_KEY
+        sync: false              # Render panelinden gir (gizli)
+      - key: STORAGE_BACKEND
+        value: postgres          # OHLCV + hesaplar Postgres'te (kalıcı)
+      - key: DATABASE_URL
+        fromDatabase:
+          name: ahk-db
+          property: connectionString
+
+databases:
+  - name: ahk-db
+    plan: free
+    databaseName: market
+    user: ahk

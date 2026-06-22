@@ -1,0 +1,25 @@
+fastapi==0.115.6
+uvicorn[standard]==0.34.0
+pydantic==2.10.4
+pydantic-settings==2.7.1
+pandas==2.2.3
+numpy==2.2.1
+yfinance==0.2.51
+finnhub-python==2.4.21
+pyarrow==18.1.0
+ta==0.11.0
+scipy==1.15.0
+optuna==4.1.0
+httpx==0.28.1
+python-dotenv==1.0.1
+pytest==8.3.4
+
+# Opsiyonel — FinBERT derin duyarlılık modeli (ağır; ~400MB model indirir).
+# Kurmadan da Sentiment çalışır (TR+EN sözlük arka ucu). Etkinleştirmek için:
+#   pip install transformers torch
+# transformers==4.48.0
+# torch==2.5.1
+
+# PostgreSQL / TimescaleDB depolama + hesaplar için (Render/üretim). DATABASE_URL boşsa
+# kullanılmaz; SQLite stdlib ile çalışır. Render Docker imajında da ayrıca kurulur.
+psycopg2-binary==2.9.10

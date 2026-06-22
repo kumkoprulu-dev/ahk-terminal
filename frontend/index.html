@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AHK Terminal</title>
+  <link rel="stylesheet" href="/static/css/styles.css?v=7" />
+  <script src="/static/vendor/lightweight-charts.js"></script>
+</head>
+<body>
+  <header>
+    <div class="logo">AHK <span>Terminal</span></div>
+    <nav class="tabs">
+      <button class="tab active" data-view="dashboard">Panel</button>
+      <button class="tab" data-view="chart">Grafik</button>
+      <button class="tab" data-view="scanner">Tarayıcı</button>
+      <button class="tab" data-view="strategy">Strateji</button>
+      <button class="tab" data-view="optimize">Optimize</button>
+      <button class="tab" data-view="walkforward">Walk-Forward</button>
+      <button class="tab" data-view="portfolio">Portföy</button>
+      <button class="tab" data-view="sentiment">Sentiment</button>
+      <button class="tab" data-view="fundamentals">Temel</button>
+      <button class="tab" data-view="fusion">Füzyon</button>
+    </nav>
+    <div class="status" id="status">bağlanıyor…</div>
+    <span id="live-dot" title="Canlı bağlanıyor…" style="color:#8b949e;font-size:11px">● CANLI</span>
+    <div id="auth-widget"></div>
+  </header>
+
+  <!-- Giriş / Kayıt modalı -->
+  <div id="auth-modal" class="modal-overlay" style="display:none">
+    <div class="modal">
+      <h3 id="auth-title">Giriş Yap</h3>
+      <input id="auth-username" placeholder="Kullanıcı adı" autocomplete="username" />
+      <input id="auth-password" type="password" placeholder="Şifre" autocomplete="current-password" />
+      <div class="validate-msg" id="auth-msg"></div>
+      <div style="display:flex;gap:8px;margin-top:6px">
+        <button class="primary" id="auth-submit" style="flex:1">Giriş</button>
+        <button class="ghost" id="auth-toggle">Kayıt ol</button>
+        <button class="ghost" id="auth-close">✕</button>
+      </div>
+    </div>
+  </div>
+
+  <main>
+    <!-- ============ PANEL / DASHBOARD ============ -->
+    <section class="view active" id="view-dashboard">
+      <div class="hero">
+        <h1>AHK <span>Terminal</span></h1>
+        <p>BIST &amp; küresel piyasalar için tek terminal — göstergeler, tarama, backtest, parametre optimizasyonu, walk-forward, kuantum-ilhamlı portföy ve AI haber duyarlılığı.</p>
+      </div>
+      <div class="mod-grid" id="dash-modules"></div>
+      <div class="dash-cols">
+        <div class="panel">
+          <div class="toolbar" style="justify-content:space-between">
+            <h3 style="margin:0">📊 Piyasa Nabzı</h3>
+            <select id="dash-group" style="margin-left:auto"></select>
+          </div>
+          <div id="dash-breadth" class="scan-meta" style="margin-top:8px"></div>
+          <div class="dash-movers">
+            <div><div class="muted" style="font-size:11px;margin-bottom:4px">▲ En çok kazandıran</div><div id="dash-gainers"></div></div>
+            <div><div class="muted" style="font-size:11px;margin-bottom:4px">▼ En çok kaybettiren</div><div id="dash-losers"></div></div>
+          </div>
+        </div>
+        <div class="panel">
+          <h3>⚡ Hızlı Eylemler</h3>
+          <div class="param-row" style="margin-bottom:10px"><input id="dash-sym" placeholder="Sembol aç (ASELS.IS, AAPL, BTC-USD)" style="flex:1" /><button class="primary" id="dash-sym-btn">Aç</button></div>
+          <div class="muted" style="font-size:11px;margin-bottom:4px">Örnek taramalar</div>
+          <div class="examples" id="dash-quick-scans"></div>
+          <h3 style="margin-top:14px">🧠 Duyarlılık Nabzı</h3>
+          <button class="ghost" id="dash-sent-btn" style="width:100%">Seçili grubun haber duyarlılığını göster</button>
+          <div id="dash-sentiment" style="margin-top:8px"></div>
+        </div>
+      </div>
+      <div class="panel" style="margin-top:12px">
+        <h3 style="margin:0 0 8px">🔔 Alarmlar <span id="alarm-badge" class="muted" style="font-size:12px"></span></h3>
+        <div class="bt-grid" style="grid-template-columns:1fr 2fr">
+          <input id="alarm-symbol" placeholder="Sembol (ASELS.IS)" />
+          <input id="alarm-rule" placeholder="Kural: RSI(14) < 30 — ya da metinle: rsi 30 altında" />
+        </div>
+        <div class="param-row" style="margin-top:6px"><input id="alarm-name" placeholder="Alarm adı" style="flex:1" /><button class="primary" id="alarm-add">+ Ekle</button></div>
+        <div class="validate-msg" id="alarm-msg"></div>
+        <div id="alarm-list" style="margin-top:8px"></div>
+      </div>
+    </section>
+
+    <!-- ============ GRAFİK ============ -->
+    <section class="view" id="view-chart">
+      <div class="toolbar">
+        <div class="search-wrap">
+          <input id="symbol-search" placeholder="Sembol ara (ASELS, AAPL…)" autocomplete="off" style="width:320px" />
+          <div class="search-results" id="search-results"></div>
+        </div>
+        <div class="seg" id="interval-seg">
+          <button data-v="1d" class="active">1G</button>
+          <button data-v="1wk">1H</button>
+          <button data-v="1mo">1A</button>
+        </div>
+        <div class="seg" id="range-seg">
+          <button data-v="6mo">6A</button>
+          <button data-v="1y" class="active">1Y</button>
+          <button data-v="2y">2Y</button>
+          <button data-v="5y">5Y</button>
+        </div>
+        <div id="chart-title" style="font-weight:600"></div>
+      </div>
+
+      <div class="chart-layout">
+        <div class="chart-col">
+          <div id="chart-main"></div>
+          <div id="subcharts"></div>
+        </div>
+        <aside class="panel">
+          <h3>Gösterge Ekle</h3>
+          <div class="indic-add">
+            <select id="indic-select"></select>
+            <div id="indic-params"></div>
+            <button class="primary" id="indic-add-btn">+ Ekle</button>
+          </div>
+          <div class="active-indics" id="active-indics"></div>
+        </aside>
+      </div>
+    </section>
+
+    <!-- ============ STRATEJİ / BACKTEST ============ -->
+    <section class="view" id="view-strategy">
+      <div class="scan-layout">
+        <div class="panel">
+          <h3>Strateji</h3>
+          <div class="param-row"><label>Sembol</label><input id="bt-symbol" value="ASELS.IS" /></div>
+          <div class="toolbar" style="margin:8px 0">
+            <select id="bt-interval">
+              <option value="1d" selected>Günlük</option>
+              <option value="1wk">Haftalık</option>
+            </select>
+            <select id="bt-range">
+              <option value="1y">1 Yıl</option>
+              <option value="2y" selected>2 Yıl</option>
+              <option value="5y">5 Yıl</option>
+              <option value="10y">10 Yıl</option>
+            </select>
+            <select id="bt-direction">
+              <option value="long" selected>Long</option>
+              <option value="short">Short</option>
+            </select>
+          </div>
+          <div class="param-row" style="margin-bottom:6px"><input id="bt-nl" placeholder="🪄 Metinle anlat: aşırı satım ve güçlü trend" style="flex:1" /><button class="ghost" id="bt-nl-btn">Kur</button></div>
+          <label class="muted" style="font-size:12px">Giriş kuralı</label>
+          <textarea id="bt-entry" class="rule-box" style="height:64px" placeholder="RSI(14) < 30"></textarea>
+          <label class="muted" style="font-size:12px">Çıkış kuralı (opsiyonel)</label>
+          <textarea id="bt-exit" class="rule-box" style="height:64px" placeholder="RSI(14) > 55"></textarea>
+          <div class="bt-grid">
+            <div class="param-row"><label>Sermaye</label><input id="bt-cash" type="number" value="10000" /></div>
+            <div class="param-row"><label title="İşlem başına komisyon yüzdesi (tek yön)">Kom. %</label><input id="bt-fee" type="number" value="0.1" step="0.05" min="0" /></div>
+            <div class="param-row"><label>Stop %</label><input id="bt-stop" type="number" placeholder="—" step="0.5" /></div>
+            <div class="param-row"><label>Hedef %</label><input id="bt-target" type="number" placeholder="—" step="0.5" /></div>
+          </div>
+          <div class="validate-msg" id="bt-validate"></div>
+          <button class="primary" id="bt-run" style="width:100%">Backtest Çalıştır</button>
+          <div class="saved-bar"><button class="ghost" id="bt-save">💾 Kaydet</button><select id="bt-load"><option value="">📂 Yükle…</option></select><button class="ghost" id="bt-del" title="Seçili kaydı sil">🗑</button></div>
+          <h3 style="margin-top:16px">Örnek Stratejiler</h3>
+          <div class="examples" id="bt-examples"></div>
+        </div>
+        <div class="chart-col">
+          <div class="scan-meta" id="bt-meta">Bir strateji girip "Backtest Çalıştır"a basın.</div>
+          <div id="bt-metrics" class="metrics-grid"></div>
+          <div id="bt-equity" style="width:100%;height:280px;background:var(--bg2);border:1px solid var(--border);border-radius:8px;margin-top:12px;display:none"></div>
+          <div id="bt-trades" style="margin-top:12px"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ TEMEL ANALİZ ============ -->
+    <section class="view" id="view-fundamentals">
+      <div class="scan-layout">
+        <div class="panel">
+          <h3>Temel Analiz</h3>
+          <div class="param-row"><label>Grup</label><select id="fd-group"></select></div>
+          <button class="primary" id="fd-run" style="width:100%;margin-top:8px">Grup Analizi</button>
+          <div style="margin-top:14px">
+            <label class="muted" style="font-size:12px;display:block;margin-bottom:4px">veya tek sembol</label>
+            <div class="param-row"><input id="fd-symbol" placeholder="AAPL / ASELS.IS" style="flex:1" /><button class="ghost" id="fd-symbol-btn">Ara</button></div>
+          </div>
+          <p class="muted" style="font-size:11px;margin-top:10px">Skor = değer + kârlılık + büyüme + finansal sağlık (0-100). Kaynak: <b>BIST → İş Yatırım</b> (sanayi + banka mali tabloları, güncel fiyatla oran hesabı), ABD → Finnhub. İlk grup analizi yavaştır (mali tablolar çekilir), sonra önbellekten hızlı gelir.</p>
+        </div>
+        <div class="chart-col">
+          <div class="scan-meta" id="fd-meta">Bir grup seçip "Grup Analizi"ne basın ya da tek sembol arayın.</div>
+          <div id="fd-results"></div>
+          <div class="panel" id="fd-detail-panel" style="padding:12px;margin-top:12px;display:none">
+            <h3 id="fd-detail-title">Detay</h3>
+            <div id="fd-detail"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ FÜZYON ============ -->
+    <section class="view" id="view-fusion">
+      <div class="scan-layout">
+        <div class="panel">
+          <h3>3'lü Füzyon Sinyali</h3>
+          <p class="muted" style="font-size:11px;margin:0 0 8px">Teknik + Haber + Temel → birleşik AL/SAT sinyali.</p>
+          <div class="param-row"><label>Grup</label><select id="fz-group"></select></div>
+          <h3 style="margin-top:12px">Ağırlıklar</h3>
+          <div class="param-row"><label>Teknik</label><input id="fz-wt" type="number" value="0.40" step="0.05" min="0" max="1" style="flex:1" /></div>
+          <div class="param-row"><label>Haber</label><input id="fz-ws" type="number" value="0.25" step="0.05" min="0" max="1" style="flex:1" /></div>
+          <div class="param-row"><label>Temel</label><input id="fz-wf" type="number" value="0.35" step="0.05" min="0" max="1" style="flex:1" /></div>
+          <label class="param-row" style="margin-top:8px;cursor:pointer"><input type="checkbox" id="fz-sent" checked style="flex:none;width:auto" /> <span class="muted" style="font-size:12px">Haber analizini dahil et (yavaş)</span></label>
+          <button class="primary" id="fz-run" style="width:100%;margin-top:10px">Füzyon Analizi</button>
+          <div style="margin-top:12px;font-size:11px;line-height:1.6" class="muted">
+            <b>Kurallar:</b><br>💪 Üç eksen uyumlu → güçlü fırsat<br>⚠ Teknik olumlu + haber olumsuz → risk uyarısı<br>↗ Haber olumlu + teknik zayıf → erken sinyal
+          </div>
+        </div>
+        <div class="chart-col">
+          <div class="scan-meta" id="fz-meta">Bir grup seçip "Füzyon Analizi"ne basın.</div>
+          <div id="fz-results"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ SENTIMENT ============ -->
+    <section class="view" id="view-sentiment">
+      <div class="scan-layout">
+        <div class="panel">
+          <h3>Haber Duyarlılığı (AI)</h3>
+          <div class="param-row"><label>Grup</label><select id="se-group"></select></div>
+          <button class="primary" id="se-run" style="width:100%;margin-top:8px">Grubu Analiz Et</button>
+          <div class="search-wrap" style="margin-top:14px">
+            <label class="muted" style="font-size:12px;display:block;margin-bottom:4px">veya tek sembol</label>
+            <div class="param-row"><input id="se-symbol" placeholder="ASELS.IS / AAPL / BTC-USD" style="flex:1" /><button class="ghost" id="se-symbol-btn">Ara</button></div>
+          </div>
+          <div class="param-row" style="margin-top:12px"><label>Model</label><select id="se-backend"></select></div>
+          <div class="validate-msg" id="se-meta2"></div>
+          <p class="muted" style="font-size:11px;margin-top:8px">Sözlük: TR+EN finans sözlüğü (hızlı). FinBERT kuruluysa derin model seçilebilir. Haberler Google News'ten çekilir.</p>
+        </div>
+        <div class="chart-col">
+          <div class="scan-meta" id="se-meta">Bir grup seçip "Analiz Et"e basın ya da tek sembol arayın.</div>
+          <div id="se-results"></div>
+          <div class="panel" id="se-detail-panel" style="padding:12px;margin-top:12px;display:none">
+            <h3 id="se-detail-title">Haber Başlıkları</h3>
+            <div id="se-detail"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ PORTFÖY ============ -->
+    <section class="view" id="view-portfolio">
+      <div class="scan-layout">
+        <div class="panel">
+          <h3>Portföy Optimizasyonu</h3>
+          <div class="param-row"><label>Grup</label><select id="pf-group"></select></div>
+          <div class="toolbar" style="margin:8px 0">
+            <select id="pf-method"></select>
+            <select id="pf-range"><option value="1y">1 Yıl</option><option value="2y" selected>2 Yıl</option><option value="5y">5 Yıl</option></select>
+          </div>
+          <div class="bt-grid">
+            <div class="param-row"><label title="Kuantum QUBO risk aversiyon katsayısı (λ)">Risk λ</label><input id="pf-risk" type="number" value="0.5" step="0.1" min="0.1" max="5" /></div>
+            <div class="param-row"><label title="Monte Carlo ufku (gün)">MC Ufuk</label><input id="pf-mc" type="number" value="21" step="1" min="1" /></div>
+            <div class="param-row"><label title="Temel skoru bu eşiğin altındaki hisseleri ele (0 = kapalı)">Temel ≥</label><input id="pf-minfund" type="number" value="0" step="5" min="0" max="100" /></div>
+          </div>
+          <label class="muted" style="font-size:12px;margin-top:6px;display:block">Semboller (çıkarmak için ✕)</label>
+          <div id="pf-symbols" class="pf-symbols"></div>
+          <div class="param-row" style="margin-top:6px"><input id="pf-add" placeholder="Sembol ekle (örn. SASA.IS)" style="flex:1" /><button class="ghost" id="pf-add-btn">+</button></div>
+          <label class="param-row" style="margin-top:8px;cursor:pointer"><input type="checkbox" id="pf-tilt" style="flex:none;width:auto" /> <span class="muted" style="font-size:12px">⚡ Füzyon tilt (TechScore ile ağırlık eğ)</span></label>
+          <div class="validate-msg" id="pf-validate"></div>
+          <button class="primary" id="pf-run" style="width:100%;margin-top:6px">Optimize Et</button>
+          <div class="saved-bar"><button class="ghost" id="pf-save">💾 Kaydet</button><select id="pf-load"><option value="">📂 Yükle…</option></select><button class="ghost" id="pf-del" title="Seçili kaydı sil">🗑</button></div>
+          <p class="muted" style="font-size:11px;margin-top:8px">⚛️ Kuantum = QUBO + Simulated Annealing (kuantum-ilhamlı, klasik CPU). Gerçek kuantum donanımı değildir.</p>
+        </div>
+        <div class="chart-col">
+          <div class="scan-meta" id="pf-meta">Grup seçip "Optimize Et"e basın.</div>
+          <div id="pf-metrics" class="metrics-grid"></div>
+          <div class="pf-cols">
+            <div class="panel" style="padding:12px">
+              <h3>Ağırlıklar</h3>
+              <div id="pf-weights"></div>
+            </div>
+            <div class="panel" style="padding:12px">
+              <h3>Etkin Sınır (Risk–Getiri)</h3>
+              <div id="pf-frontier"></div>
+            </div>
+          </div>
+          <div class="panel" style="padding:12px;margin-top:12px">
+            <h3>🎲 Monte Carlo Risk (<span id="pf-mc-h">21</span> gün)</h3>
+            <div id="pf-mc-cards" class="metrics-grid"></div>
+            <div id="pf-mc-hist" style="margin-top:10px"></div>
+          </div>
+          <div class="panel" style="padding:12px;margin-top:12px">
+            <h3>Yöntem Karşılaştırması</h3>
+            <div id="pf-compare"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ WALK-FORWARD ============ -->
+    <section class="view" id="view-walkforward">
+      <div class="scan-layout">
+        <div class="panel">
+          <h3>Walk-Forward Analizi</h3>
+          <div class="param-row"><label>Sembol</label><input id="wf-symbol" value="AAPL" /></div>
+          <div class="toolbar" style="margin:8px 0">
+            <select id="wf-interval"><option value="1d" selected>Günlük</option><option value="1wk">Haftalık</option></select>
+            <select id="wf-range"><option value="5y" selected>5 Yıl</option><option value="10y">10 Yıl</option></select>
+            <select id="wf-direction"><option value="long" selected>Long</option><option value="short">Short</option></select>
+          </div>
+          <label class="muted" style="font-size:12px">Giriş şablonu — <code>{param}</code></label>
+          <textarea id="wf-entry" class="rule-box" style="height:52px" placeholder="EMA({fast}) > EMA({slow})"></textarea>
+          <label class="muted" style="font-size:12px">Çıkış şablonu (opsiyonel)</label>
+          <textarea id="wf-exit" class="rule-box" style="height:52px" placeholder="EMA({fast}) < EMA({slow})"></textarea>
+
+          <h3 style="margin-top:12px">Parametre Aralıkları</h3>
+          <div id="wf-params" class="opt-params"></div>
+
+          <div class="bt-grid" style="margin-top:10px">
+            <div class="param-row"><label title="Eğitim penceresi (bar)">Eğitim</label><input id="wf-train" type="number" value="252" step="10" /></div>
+            <div class="param-row"><label title="Test penceresi (bar)">Test</label><input id="wf-test" type="number" value="63" step="10" /></div>
+            <div class="param-row"><label>Yöntem</label><select id="wf-method"><option value="grid" selected>Grid</option><option value="random">Random</option><option value="bayes">Bayesian</option></select></div>
+            <div class="param-row"><label>Hedef</label><select id="wf-objective"></select></div>
+            <div class="param-row"><label>Deneme</label><input id="wf-trials" type="number" value="60" step="10" /></div>
+            <div class="param-row"><label>Kom. %</label><input id="wf-fee" type="number" value="0.1" step="0.05" /></div>
+          </div>
+          <div class="validate-msg" id="wf-validate"></div>
+          <button class="primary" id="wf-run" style="width:100%">Walk-Forward Başlat</button>
+          <p class="muted" style="font-size:11px;margin-top:8px">Eğitimde optimize, ardışık test penceresinde out-of-sample sınar. IS≫OOS ise strateji ezberlemiştir.</p>
+        </div>
+        <div class="chart-col">
+          <div class="scan-meta" id="wf-meta">Şablon, aralık ve eğitim/test bar değerlerini girip başlatın.</div>
+          <div id="wf-summary" class="metrics-grid"></div>
+          <div id="wf-equity" style="width:100%;height:260px;background:var(--bg2);border:1px solid var(--border);border-radius:8px;margin-top:12px;display:none"></div>
+          <div id="wf-folds" style="margin-top:12px"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ OPTİMİZE ============ -->
+    <section class="view" id="view-optimize">
+      <div class="scan-layout">
+        <div class="panel">
+          <h3>Parametre Optimizasyonu</h3>
+          <div class="param-row"><label>Sembol</label><input id="opt-symbol" value="AAPL" /></div>
+          <div class="toolbar" style="margin:8px 0">
+            <select id="opt-interval"><option value="1d" selected>Günlük</option><option value="1wk">Haftalık</option></select>
+            <select id="opt-range"><option value="2y">2 Yıl</option><option value="5y" selected>5 Yıl</option><option value="10y">10 Yıl</option></select>
+            <select id="opt-direction"><option value="long" selected>Long</option><option value="short">Short</option></select>
+          </div>
+          <label class="muted" style="font-size:12px">Giriş şablonu — <code>{param}</code> kullanın</label>
+          <textarea id="opt-entry" class="rule-box" style="height:56px" placeholder="EMA({fast}) > EMA({slow})"></textarea>
+          <label class="muted" style="font-size:12px">Çıkış şablonu (opsiyonel)</label>
+          <textarea id="opt-exit" class="rule-box" style="height:56px" placeholder="EMA({fast}) < EMA({slow})"></textarea>
+
+          <h3 style="margin-top:12px">Parametre Aralıkları</h3>
+          <div id="opt-params" class="opt-params"><div class="muted" style="font-size:12px">Şablona <code>{ad}</code> yazınca otomatik belirir.</div></div>
+
+          <div class="bt-grid" style="margin-top:10px">
+            <div class="param-row"><label>Yöntem</label>
+              <select id="opt-method"><option value="grid">Grid</option><option value="random">Random</option><option value="bayes" selected>Bayesian</option></select></div>
+            <div class="param-row"><label>Hedef</label><select id="opt-objective"></select></div>
+            <div class="param-row"><label>Deneme</label><input id="opt-trials" type="number" value="150" step="10" min="10" /></div>
+            <div class="param-row"><label>Kom. %</label><input id="opt-fee" type="number" value="0.1" step="0.05" min="0" /></div>
+          </div>
+          <div class="validate-msg" id="opt-validate"></div>
+          <button class="primary" id="opt-run" style="width:100%">Optimizasyonu Başlat</button>
+          <h3 style="margin-top:16px">Örnekler</h3>
+          <div class="examples" id="opt-examples"></div>
+        </div>
+        <div class="chart-col">
+          <div class="scan-meta" id="opt-meta">Bir şablon ve aralık girip başlatın.</div>
+          <div id="opt-best"></div>
+          <div id="opt-results" style="margin-top:12px"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ TARAYICI ============ -->
+    <section class="view" id="view-scanner">
+      <div class="scan-layout">
+        <div class="panel">
+          <h3>Tarama Kuralı</h3>
+          <div class="toolbar" style="margin-bottom:8px">
+            <select id="scan-universe"></select>
+            <select id="scan-range">
+              <option value="6mo">6 Ay</option>
+              <option value="1y" selected>1 Yıl</option>
+              <option value="2y">2 Yıl</option>
+            </select>
+          </div>
+          <div class="param-row" style="margin-bottom:6px"><input id="scan-nl" placeholder="🪄 Metinle anlat: RSI 30 altında ve hacim ortalamanın üstünde" style="flex:1" /><button class="ghost" id="scan-nl-btn">Kur</button></div>
+          <textarea id="scan-rule" class="rule-box" placeholder="RSI(14) < 30 AND MACD > Signal"></textarea>
+          <div class="validate-msg" id="scan-validate"></div>
+          <button class="primary" id="scan-run" style="width:100%">Tara</button>
+          <h3 style="margin-top:16px">Örnek Kurallar</h3>
+          <div class="examples" id="scan-examples"></div>
+        </div>
+        <div class="chart-col">
+          <div class="scan-meta" id="scan-meta">Bir kural seçip "Tara"ya basın.</div>
+          <div id="scan-results"></div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script src="/static/js/auth.js?v=16"></script>
+  <script src="/static/js/live.js?v=16"></script>
+  <script src="/static/js/chart.js?v=16"></script>
+  <script src="/static/js/scanner.js?v=16"></script>
+  <script src="/static/js/strategy.js?v=16"></script>
+  <script src="/static/js/optimize.js?v=16"></script>
+  <script src="/static/js/walkforward.js?v=16"></script>
+  <script src="/static/js/portfolio.js?v=16"></script>
+  <script src="/static/js/sentiment.js?v=16"></script>
+  <script src="/static/js/dashboard.js?v=16"></script>
+  <script src="/static/js/fusion.js?v=16"></script>
+  <script src="/static/js/fundamentals.js?v=16"></script>
+  <script src="/static/js/alarms.js?v=16"></script>
+  <script src="/static/js/app.js?v=16"></script>
+</body>
+</html>
