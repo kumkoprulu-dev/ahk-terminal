@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>KatılımLens — Katılım Bankacılığı Ürün Analizi</title>
+<link rel="stylesheet" href="/static/css/styles.css?v=6">
+</head>
+<body>
+<header class="topbar">
+  <div class="brand">
+    <span class="logo">◈</span>
+    <div>
+      <h1>KatılımLens</h1>
+      <p class="sub">Katılım Bankacılığı Finansal Metin Madenciliği &amp; Akıllı Asistan · TEKNOFEST 2026 · Senaryo 2</p>
+    </div>
+  </div>
+  <div class="actions">
+    <span id="provider-badge" class="badge">provider: —</span>
+    <button id="btn-live" class="btn live">🌐 Canlı çek (gerçek bankalar)</button>
+    <button id="btn-ingest" class="btn primary">↻ Örnek veri</button>
+  </div>
+</header>
+
+<main>
+  <!-- Özet kartları -->
+  <section class="cards" id="cards"></section>
+
+  <div class="grid">
+    <!-- Sol: karşılaştırma + ürünler -->
+    <div class="col-main">
+      <section class="panel">
+        <div class="panel-head">
+          <h2>Ürün Karşılaştırma Tablosu</h2>
+          <select id="tip-filter">
+            <option value="">Tüm ürün tipleri</option>
+            <option value="katilma_hesabi">Katılma Hesabı</option>
+            <option value="altin_hesabi">Altın Hesabı</option>
+            <option value="doviz_katilma">Döviz Katılma</option>
+            <option value="finansman">Finansman</option>
+          </select>
+        </div>
+        <div class="table-wrap">
+          <table id="compare-table">
+            <thead><tr>
+              <th>Banka</th><th>Ürün</th><th>Tip</th>
+              <th class="num">Kâr Payı %</th><th class="num">Net %</th>
+              <th class="num">Vade</th><th>Birim</th><th class="num">Min</th>
+              <th class="num">Güven</th><th>Kaynak</th>
+            </tr></thead>
+            <tbody><tr><td colspan="10" class="empty">Henüz veri yok — "Örnek verileri çek" butonuna basın.</td></tr></tbody>
+          </table>
+        </div>
+        <p class="hint">💡 Her kâr payı oranının üzerine gelin — değeri destekleyen <b>birebir kaynak alıntısı</b> görünür (grounding / sıfır halüsinasyon).</p>
+      </section>
+    </div>
+
+    <!-- Sağ: chatbot + eval -->
+    <div class="col-side">
+      <section class="panel chat">
+        <div class="panel-head"><h2>🤖 Akıllı Asistan</h2><span class="mini" id="chat-mode">deterministik</span></div>
+        <div id="chat-log" class="chat-log">
+          <div class="msg bot">Merhaba! Katılım bankası ürünleri hakkında soru sorun. Örnek: <i>"En yüksek kâr payı hangi bankada?"</i></div>
+        </div>
+        <div class="suggest" id="suggest"></div>
+        <form id="chat-form" class="chat-input">
+          <input id="chat-q" type="text" placeholder="Sorunuzu yazın…" autocomplete="off">
+          <button class="btn primary" type="submit">Gönder</button>
+        </form>
+      </section>
+
+      <section class="panel">
+        <div class="panel-head"><h2>📊 Doğruluk (Eval)</h2><button id="btn-eval" class="btn ghost">Ölç</button></div>
+        <div id="eval-box" class="eval-box"><p class="hint">Gold-set karşı çıkarım doğruluğu. "Ölç" butonuna basın.</p></div>
+      </section>
+    </div>
+  </div>
+</main>
+
+<script src="/static/js/app.js?v=6"></script>
+</body>
+</html>

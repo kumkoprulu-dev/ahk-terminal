@@ -1,0 +1,142 @@
+:root{
+  --bg:#0b1020; --panel:#131a2e; --panel2:#0f1526; --line:#22304f;
+  --txt:#e7ecf6; --muted:#8b9bbd; --accent:#16c79a; --accent2:#2f81f7;
+  --gold:#f5b301; --danger:#ff5d6c; --chip:#1c2742;
+  --radius:14px; --shadow:0 6px 24px rgba(0,0,0,.35);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:"Segoe UI",system-ui,sans-serif;background:radial-gradient(1200px 600px at 80% -10%,#15224a 0%,var(--bg) 55%);color:var(--txt);min-height:100vh}
+h1,h2{font-weight:700}
+.topbar{display:flex;justify-content:space-between;align-items:center;padding:18px 28px;border-bottom:1px solid var(--line);background:rgba(11,16,32,.7);backdrop-filter:blur(8px);position:sticky;top:0;z-index:10;flex-wrap:wrap;gap:12px}
+.brand{display:flex;align-items:center;gap:14px}
+.logo{font-size:32px;color:var(--accent);filter:drop-shadow(0 0 10px rgba(22,199,154,.5))}
+.brand h1{font-size:22px;letter-spacing:.3px}
+.sub{color:var(--muted);font-size:12.5px;margin-top:2px}
+.actions{display:flex;align-items:center;gap:12px}
+.badge{font-size:12px;color:var(--muted);background:var(--chip);border:1px solid var(--line);padding:5px 10px;border-radius:20px}
+.btn{cursor:pointer;border:none;border-radius:10px;padding:10px 16px;font-size:14px;font-weight:600;transition:.15s;color:#fff}
+.btn.primary{background:linear-gradient(135deg,var(--accent),#0fae86)}
+.btn.primary:hover{filter:brightness(1.08);transform:translateY(-1px)}
+.btn.ghost{background:transparent;border:1px solid var(--line);color:var(--muted)}
+.btn.ghost:hover{color:var(--txt);border-color:var(--accent)}
+.btn.live{background:linear-gradient(135deg,var(--accent2),#1e63c8)}
+.btn.live:hover{filter:brightness(1.1);transform:translateY(-1px)}
+main{padding:24px 28px;max-width:1500px;margin:0 auto}
+
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:16px;margin-bottom:22px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:18px;box-shadow:var(--shadow)}
+.card .k{color:var(--muted);font-size:12.5px;text-transform:uppercase;letter-spacing:.5px}
+.card .v{font-size:30px;font-weight:800;margin-top:6px}
+.card .v small{font-size:14px;color:var(--muted);font-weight:600}
+.card.good .v{color:var(--accent)}
+.card.accent .v{color:var(--accent2)}
+.card.gold .v{color:var(--gold)}
+
+.grid{display:grid;grid-template-columns:1fr 400px;gap:20px}
+@media(max-width:1100px){.grid{grid-template-columns:1fr}}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:18px;margin-bottom:20px;box-shadow:var(--shadow)}
+.panel-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}
+.panel-head h2{font-size:16px}
+.mini{font-size:11px;color:var(--accent);background:rgba(22,199,154,.12);padding:3px 8px;border-radius:10px}
+select{background:var(--panel2);color:var(--txt);border:1px solid var(--line);border-radius:8px;padding:7px 10px;font-size:13px}
+
+.table-wrap{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:13.5px}
+th,td{text-align:left;padding:11px 12px;border-bottom:1px solid var(--line)}
+th{color:var(--muted);font-size:11.5px;text-transform:uppercase;letter-spacing:.4px;position:sticky;top:0}
+th.num,td.num{text-align:right}
+tbody tr:hover{background:rgba(47,129,247,.06)}
+.rate{font-weight:800;color:var(--accent);cursor:help;border-bottom:1px dotted var(--accent)}
+.rate.best{color:var(--gold);border-color:var(--gold)}
+.paylasim{font-size:11px;color:var(--accent2);margin-top:3px;white-space:nowrap}
+.tag{display:inline-block;font-size:11px;padding:2px 8px;border-radius:8px;background:var(--chip);border:1px solid var(--line);color:var(--muted)}
+.srcbadge{display:inline-block;font-size:9.5px;font-weight:700;padding:1px 6px;border-radius:6px;letter-spacing:.4px;vertical-align:middle}
+.srcbadge.canli{background:rgba(47,129,247,.18);color:var(--accent2);border:1px solid var(--accent2)}
+.srcbadge.ornek{background:var(--chip);color:var(--muted);border:1px solid var(--line)}
+.conf{font-variant-numeric:tabular-nums}
+.bar{height:6px;border-radius:4px;background:var(--line);overflow:hidden;width:54px;display:inline-block;vertical-align:middle}
+.bar>i{display:block;height:100%;background:linear-gradient(90deg,var(--accent2),var(--accent))}
+.src-link{color:var(--accent2);text-decoration:none;font-size:12px}
+.src-link:hover{text-decoration:underline}
+.empty{color:var(--muted);text-align:center;padding:30px}
+.hint{color:var(--muted);font-size:12px;margin-top:12px;line-height:1.5}
+
+/* Chat */
+.chat{display:flex;flex-direction:column}
+.chat-log{flex:1;min-height:240px;max-height:360px;overflow-y:auto;display:flex;flex-direction:column;gap:10px;padding:4px}
+.msg{padding:10px 13px;border-radius:12px;font-size:13.5px;line-height:1.5;max-width:92%;white-space:pre-wrap}
+.msg.bot{background:var(--panel2);border:1px solid var(--line);align-self:flex-start;border-bottom-left-radius:3px}
+.msg.user{background:linear-gradient(135deg,var(--accent2),#2566c8);align-self:flex-end;border-bottom-right-radius:3px}
+.msg .src{margin-top:8px;font-size:11.5px;color:var(--muted);border-top:1px dashed var(--line);padding-top:6px}
+.msg .src b{color:var(--accent)}
+.suggest{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0}
+.chip{cursor:pointer;font-size:12px;padding:6px 10px;border-radius:16px;background:var(--chip);border:1px solid var(--line);color:var(--muted)}
+.chip:hover{color:var(--txt);border-color:var(--accent)}
+.chat-input{display:flex;gap:8px;margin-top:6px}
+.chat-input input{flex:1;background:var(--panel2);border:1px solid var(--line);border-radius:10px;padding:11px;color:var(--txt);font-size:14px}
+.chat-input input:focus{outline:none;border-color:var(--accent)}
+
+/* Eval */
+.eval-box{font-size:13px}
+.eval-metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:12px}
+.metric{background:var(--panel2);border:1px solid var(--line);border-radius:10px;padding:10px;text-align:center}
+.metric .mv{font-size:22px;font-weight:800;color:var(--accent)}
+.metric .ml{font-size:11px;color:var(--muted);text-transform:uppercase}
+.confusion{display:flex;gap:8px;font-size:12px;color:var(--muted)}
+.confusion span{background:var(--chip);padding:4px 8px;border-radius:8px}
+.spin{display:inline-block;animation:sp 1s linear infinite}
+@keyframes sp{to{transform:rotate(360deg)}}
+
+/* ---- Tablet ---- */
+@media(max-width:1100px){
+  .grid{grid-template-columns:1fr}
+  main{padding:18px 16px}
+}
+
+/* ---- Mobil (≤640px) ---- */
+@media(max-width:640px){
+  .topbar{padding:14px 16px}
+  .brand h1{font-size:19px}
+  .sub{font-size:11px}
+  .actions{width:100%;justify-content:space-between}
+  .btn{padding:9px 12px;font-size:13px}
+  main{padding:14px 12px}
+
+  /* Özet kartları: 2 sütun, kompakt */
+  .cards{grid-template-columns:repeat(2,1fr);gap:10px}
+  .card{padding:13px}
+  .card .v{font-size:23px}
+  .card .k{font-size:11px}
+
+  .panel{padding:14px}
+  .panel-head{flex-wrap:wrap;gap:8px}
+
+  /* Karşılaştırma tablosunu KART görünümüne çevir */
+  #compare-table thead{display:none}
+  #compare-table, #compare-table tbody, #compare-table tr, #compare-table td{display:block;width:100%}
+  #compare-table tr{
+    background:var(--panel2);border:1px solid var(--line);border-radius:12px;
+    padding:8px 12px;margin-bottom:12px}
+  #compare-table td{
+    display:flex;justify-content:space-between;align-items:center;
+    text-align:right;border:none;border-bottom:1px dashed var(--line);padding:8px 0}
+  #compare-table td:last-child{border-bottom:none}
+  #compare-table td::before{
+    content:attr(data-label);color:var(--muted);font-size:11.5px;
+    text-transform:uppercase;letter-spacing:.4px;text-align:left;font-weight:600}
+  #compare-table td.num{text-align:right}
+  #compare-table td[data-label="Banka"]{font-size:15px;border-bottom:1px solid var(--line);padding-bottom:10px}
+  #compare-table td[data-label="Banka"]::before{font-size:13px;color:var(--accent)}
+  .bar{width:80px}
+
+  /* Chat */
+  .col-side{order:2}
+  .chat-log{max-height:300px}
+  .eval-metrics{grid-template-columns:repeat(2,1fr)}
+  .msg{max-width:96%}
+}
+
+/* Çok dar ekran */
+@media(max-width:340px){
+  .cards{grid-template-columns:1fr}
+}

@@ -26,3 +26,11 @@ backend/data/cache/
 Thumbs.db
 .idea/
 .vscode/
+
+# TEKNOFEST LLM secrets
+teknofest/backend/.env
+
+# TEKNOFEST geçici/üretilen dosyalar
+teknofest/backend/data/
+~$*.docx
+*.db

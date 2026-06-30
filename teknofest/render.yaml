@@ -1,0 +1,19 @@
+# Render Blueprint — KatılımLens (TEKNOFEST Senaryo 2)
+# https://render.com → New → Blueprint → bu repo → Root Directory: teknofest
+services:
+  - type: web
+    name: katilimlens
+    runtime: docker
+    plan: free
+    rootDir: teknofest
+    dockerfilePath: ./Dockerfile
+    healthCheckPath: /api/health
+    envVars:
+      # LLM omurgası: varsayılan "mock" (anahtar gerektirmez, F1=1.00).
+      # Claude için aşağıdakileri Render panelinden ayarlayın:
+      - key: TF_LLM_PROVIDER
+        value: mock              # claude | ollama yapmak için değiştirin
+      - key: ANTHROPIC_API_KEY
+        sync: false              # claude seçilirse panelden gizli olarak girin
+      - key: TF_CLAUDE_MODEL
+        value: claude-opus-4-8

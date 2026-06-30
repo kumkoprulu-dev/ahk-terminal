@@ -7,6 +7,13 @@
       "runtimeArgs": ["-m", "uvicorn", "app.main:app", "--app-dir", "backend", "--port", "8077"],
       "port": 8077,
       "autoPort": false
+    },
+    {
+      "name": "teknofest",
+      "runtimeExecutable": "backend/venv/Scripts/python.exe",
+      "runtimeArgs": ["-m", "uvicorn", "app.main:app", "--app-dir", "teknofest/backend", "--port", "8090"],
+      "port": 8090,
+      "autoPort": false
     }
   ]
 }
