@@ -198,6 +198,10 @@ _PROVIDERS = {
 
 def get_provider(name: str | None = None) -> LLMProvider:
     name = (name or config.LLM_PROVIDER).lower()
+    # ON-PREM kilidi: bulut sağlayıcı istense bile yerel omurgaya düş.
+    if config.ONPREM and name in config.CLOUD_PROVIDERS:
+        oll = OllamaProvider()
+        return oll if oll.available else MockProvider()
     cls = _PROVIDERS.get(name, MockProvider)
     return cls()
 

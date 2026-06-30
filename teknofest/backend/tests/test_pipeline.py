@@ -90,6 +90,23 @@ def test_chat_grounded_sources():
     assert any("Türkiye Finans" in (k.get("banka") or "") for k in r["kaynaklar"])
 
 
+def test_onprem_bulut_engellenir():
+    """ON-PREM açıkken bulut sağlayıcı istense bile yerel omurgaya düşülür."""
+    import importlib
+    from app import config
+    from app.llm import get_provider
+
+    old = config.ONPREM
+    config.ONPREM = True
+    try:
+        # Bulut isteği → Ollama yoksa mock'a düşmeli (asla claude/groq olmamalı)
+        for cloud in ("groq", "claude", "gemini"):
+            p = get_provider(cloud)
+            assert p.name in ("mock", "ollama"), f"{cloud} on-prem'de sızdı: {p.name}"
+    finally:
+        config.ONPREM = old
+
+
 def test_table_segmentation():
     """Kâr paylaşım oranı tablosundan yapısal çıkarım (87-13 vb.)."""
     from app.extract import tables as tbl

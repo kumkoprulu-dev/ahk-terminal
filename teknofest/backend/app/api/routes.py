@@ -20,9 +20,18 @@ def _load() -> list[KatilimUrunu]:
 
 @router.get("/health")
 def health():
+    from .. import config
     prov = get_provider()
-    return {"ok": True, "provider": prov.name, "provider_available": prov.available,
-            "urun_sayisi": store.count()}
+    harici = prov.name in config.CLOUD_PROVIDERS
+    return {
+        "ok": True,
+        "provider": prov.name,
+        "provider_available": prov.available,
+        "onprem": config.ONPREM,
+        "harici_servis_kullaniliyor": harici,
+        "veri_kurum_disina_cikmiyor": not harici,
+        "urun_sayisi": store.count(),
+    }
 
 
 @router.post("/ingest/samples")

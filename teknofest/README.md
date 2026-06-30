@@ -83,7 +83,22 @@ uvicorn app.main:app --app-dir teknofest/backend --port 8090
 # tarayıcı: http://localhost:8090
 ```
 
-### LLM omurgasını seçme (ÜCRETSİZ seçenekler)
+### On-Prem (kurum içi) garantisi — şartname 5.9 / 5.10
+
+Sistem **varsayılan olarak tamamen kurum içi** çalışır: `TF_ONPREM=1` (varsayılan)
+iken bulut sağlayıcıları (Groq/Gemini/Claude…) **mekanik olarak reddedilir** ve
+yalnız yerel omurga kullanılır:
+- **mock (kural motoru):** API anahtarı YOK, dış servis YOK, internet YOK — F1=1.00
+- **ollama (opsiyonel):** yerel/açık-kaynak Türkçe model, yine kurum içi
+
+`GET /api/health` bunu kanıtlar: `{"onprem": true, "harici_servis_kullaniliyor": false,
+"veri_kurum_disina_cikmiyor": true}`. Dashboard'da **🔒 On-Prem** rozeti görünür.
+Müşteri verisi kurum dışına çıkmaz; dış servise bağımlılık sıfırdır.
+
+> Bulut sağlayıcılar yalnız geliştirme kolaylığı içindir ve **submission'da
+> kullanılmaz**; açmak için bilinçli olarak `TF_ONPREM=0` verilmelidir.
+
+### (Geliştirme) LLM omurgasını seçme
 
 En kolay yol: `teknofest/backend/.env.example`'ı `.env` olarak kopyalayıp
 ücretsiz bir anahtar girin. Sunucu açılışta otomatik okur.

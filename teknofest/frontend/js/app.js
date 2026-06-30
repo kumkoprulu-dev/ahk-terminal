@@ -229,7 +229,14 @@ async function ingestLive() {
 
 async function init() {
   const h = await api("/health");
-  $("#provider-badge").textContent = "provider: " + h.provider;
+  const badge = $("#provider-badge");
+  if (h.onprem && !h.harici_servis_kullaniliyor) {
+    badge.innerHTML = `🔒 On-Prem · ${h.provider}`;
+    badge.classList.add("onprem");
+    badge.title = "Kurum içi çalışır — dış servise bağımlı değil, müşteri verisi kurum dışına çıkmaz (şartname 5.9)";
+  } else {
+    badge.textContent = "provider: " + h.provider;
+  }
   $("#chat-mode").textContent = h.provider === "mock" ? "deterministik" : h.provider + " + araç";
   renderSuggest();
   $("#btn-ingest").onclick = ingest;

@@ -38,6 +38,16 @@ _load_dotenv()
 # "ollama" : Yerel/açık Türkçe model (Ollama HTTP, ör. llama3.1, trendyol).
 LLM_PROVIDER = os.getenv("TF_LLM_PROVIDER", "mock").lower()
 
+# ---- ON-PREM KİLİDİ -------------------------------------------------------
+# Şartname (5.9 On-Prem, 5.10 Açık Kaynak): çözüm kurum içinde, dış servise
+# bağımlı olmadan çalışmalı; müşteri verisi kurum dışına çıkmamalı; üçüncü
+# taraf servis kullanılamaz. ONPREM açıkken (varsayılan) BULUT sağlayıcıları
+# (claude/groq/gemini...) reddedilir ve yalnız yerel omurga (mock/ollama)
+# kullanılır. Bulutu açmak için bilinçli olarak TF_ONPREM=0 verilmelidir.
+ONPREM = os.getenv("TF_ONPREM", "1") == "1"
+CLOUD_PROVIDERS = {"claude", "groq", "gemini", "openrouter", "together", "openai"}
+LOCAL_PROVIDERS = {"mock", "ollama"}
+
 # Claude
 ANTHROPIC_API_KEY = os.getenv("ANTHROPIC_API_KEY", "")
 CLAUDE_MODEL = os.getenv("TF_CLAUDE_MODEL", "claude-opus-4-8")
