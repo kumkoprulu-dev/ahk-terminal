@@ -49,7 +49,7 @@ function renderTable(rows) {
     const conf = Math.round((r.guven || 0) * 100);
     const canli = r.kaynak_url && !/\/ornek\//.test(r.kaynak_url);
     const srcBadge = `<span class="srcbadge ${canli ? "canli" : "ornek"}">${canli ? "CANLI" : "örnek"}</span>`;
-    return `<tr>
+    return `<tr class="clickable" data-banka="${r.banka.replace(/"/g, "&quot;")}" data-urun="${(r.urun_adi||"").replace(/"/g, "&quot;")}">
       <td data-label="Banka"><b>${r.banka}</b> ${srcBadge}</td>
       <td data-label="Ürün">${r.urun_adi}</td>
       <td data-label="Tip"><span class="tag">${TIP_AD[r.urun_tipi] || r.urun_tipi}</span></td>
@@ -72,7 +72,64 @@ async function loadData() {
   window._ROWS = flat.urunler || [];
   applyFilter();
   renderCards(ozet, window._lastF1);
+  renderSkor();
 }
+
+// ---- Karşılaştırma Skoru (şartname 5.7) -----------------------------------
+const SKOR_ETIKET = {
+  en_yuksek_kar_payi_mevduat: ["📈 En yüksek kâr payı (mevduat)", (r) => "%" + r.kar_payi_orani],
+  en_dusuk_kar_payi_finansman: ["📉 En düşük kâr payı (finansman)", (r) => "%" + r.kar_payi_orani],
+  en_uzun_vade: ["⏳ En uzun vade", (r) => r.vade_gun + " gün"],
+  en_dusuk_asgari_tutar: ["💰 En düşük asgari tutar", (r) => (r.min_tutar || 0).toLocaleString("tr-TR")],
+  en_avantajli_kampanya: ["⭐ En avantajlı", (r) => (r.avantajlar || []).length + " avantaj"],
+};
+async function renderSkor() {
+  const s = await api("/skor");
+  const cards = Object.entries(SKOR_ETIKET).map(([k, [lbl, fmt]]) => {
+    const r = s[k];
+    if (!r) return "";
+    return `<div class="skor-card">
+      <div class="sk-label">${lbl}</div>
+      <div class="sk-bank">${r.banka}</div>
+      <div class="sk-val">${fmt(r)}</div>
+      <div class="sk-urun">${r.urun_adi}</div>
+    </div>`;
+  }).join("");
+  $("#skor").innerHTML = cards || "<p class='hint'>Skor için veri yok.</p>";
+}
+
+// ---- Ürün Detay Modalı (kaynak + JSON) ------------------------------------
+const ALAN_ETIKET = {
+  kar_payi_orani: "Kâr payı oranı (brüt %)", kar_payi_orani_net: "Net kâr payı (%)",
+  paylasim_orani: "Kâr paylaşım oranı", vade_gun: "Vade (gün)", para_birimi: "Para birimi",
+  min_tutar: "Asgari tutar", max_tutar: "Azami tutar", kampanya_bitis: "Kampanya bitişi",
+};
+async function openDetay(banka, urun) {
+  const p = await api(`/urun/detay?banka=${encodeURIComponent(banka)}&urun_adi=${encodeURIComponent(urun)}`);
+  $("#detay-baslik").textContent = `${p.banka} – ${p.urun_adi}`;
+  // Kaynak/alanlar görünümü
+  const rows = Object.entries(ALAN_ETIKET).map(([key, lbl]) => {
+    const f = p[key]; if (!f || f.value == null) return "";
+    const conf = Math.round((f.confidence || 0) * 100);
+    return `<div class="alan">
+      <div class="alan-ust"><span class="alan-ad">${lbl}</span>
+        <span class="alan-deg">${f.value}</span>
+        <span class="alan-guv">%${conf}</span></div>
+      ${f.source_quote ? `<div class="alan-alinti">📌 "${f.source_quote}"</div>` : ""}
+    </div>`;
+  }).join("");
+  const av = (p.avantajlar || []).map((a) => `<span class="tag">${a}</span>`).join(" ");
+  const ks = (p.kosullar || []).map((a) => `<span class="tag">${a}</span>`).join(" ");
+  $("#detay-kaynak").innerHTML = `
+    <div class="kaynak-banner">📄 Kaynak: <a href="${p.kaynak_url}" target="_blank">${p.kaynak_url || "—"}</a>
+      <span class="mini">çekildi: ${p.cekildigi_tarih || "—"}</span></div>
+    ${rows}
+    ${av ? `<div class="alan"><div class="alan-ad">Avantajlar</div>${av}</div>` : ""}
+    ${ks ? `<div class="alan"><div class="alan-ad">Koşullar</div>${ks}</div>` : ""}`;
+  $("#detay-json").textContent = JSON.stringify(p, null, 2);
+  $("#detay-modal").style.display = "flex";
+}
+function closeDetay() { $("#detay-modal").style.display = "none"; }
 
 function applyFilter() {
   const t = $("#tip-filter").value;
@@ -178,6 +235,21 @@ async function init() {
   $("#btn-ingest").onclick = ingest;
   $("#btn-live").onclick = ingestLive;
   $("#btn-eval").onclick = runEval;
+  // Satır tıklama → detay modalı (event delegation; kaynak linkine tıklama hariç)
+  $("#compare-table").addEventListener("click", (e) => {
+    if (e.target.closest("a")) return;
+    const tr = e.target.closest("tr.clickable");
+    if (tr) openDetay(tr.dataset.banka, tr.dataset.urun);
+  });
+  $("#detay-kapat").onclick = closeDetay;
+  $("#detay-modal").addEventListener("click", (e) => { if (e.target.id === "detay-modal") closeDetay(); });
+  document.querySelectorAll(".modal-tabs .tab").forEach((t) => t.onclick = () => {
+    document.querySelectorAll(".modal-tabs .tab").forEach((x) => x.classList.remove("active"));
+    t.classList.add("active");
+    const isJson = t.dataset.tab === "json";
+    $("#detay-kaynak").style.display = isJson ? "none" : "block";
+    $("#detay-json").style.display = isJson ? "block" : "none";
+  });
   $("#tip-filter").onchange = applyFilter;
   $("#chat-form").onsubmit = (e) => { e.preventDefault(); const q = $("#chat-q").value.trim(); if (q) { ask(q); $("#chat-q").value = ""; } };
   if (h.urun_sayisi > 0) loadData(); else ingest();

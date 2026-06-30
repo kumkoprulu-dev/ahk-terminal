@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>KatılımLens — Katılım Bankacılığı Ürün Analizi</title>
-<link rel="stylesheet" href="/static/css/styles.css?v=6">
+<link rel="stylesheet" href="/static/css/styles.css?v=7">
 </head>
 <body>
 <header class="topbar">
@@ -51,7 +51,12 @@
             <tbody><tr><td colspan="10" class="empty">Henüz veri yok — "Örnek verileri çek" butonuna basın.</td></tr></tbody>
           </table>
         </div>
-        <p class="hint">💡 Her kâr payı oranının üzerine gelin — değeri destekleyen <b>birebir kaynak alıntısı</b> görünür (grounding / sıfır halüsinasyon).</p>
+        <p class="hint">💡 Her kâr payı oranının üzerine gelin — değeri destekleyen <b>birebir kaynak alıntısı</b> görünür. Bir satıra tıklayın → <b>kaynak + JSON çıkarımı</b> açılır.</p>
+      </section>
+
+      <section class="panel">
+        <div class="panel-head"><h2>🏆 Karşılaştırma Skoru</h2><span class="mini">şartname 5.7</span></div>
+        <div id="skor" class="skor-grid"><p class="hint">Veri yüklenince kategori kazananları burada listelenir.</p></div>
       </section>
     </div>
 
@@ -77,6 +82,21 @@
   </div>
 </main>
 
-<script src="/static/js/app.js?v=6"></script>
+<!-- Ürün detay modalı: kaynak (hangi banka/sayfa) + JSON çıkarımı -->
+<div id="detay-modal" class="modal-overlay" style="display:none">
+  <div class="modal">
+    <div class="modal-head">
+      <h3 id="detay-baslik">Ürün Detayı</h3>
+      <button id="detay-kapat" class="btn ghost">✕</button>
+    </div>
+    <div class="modal-tabs">
+      <button class="tab active" data-tab="kaynak">🔍 Kaynak / Alanlar</button>
+      <button class="tab" data-tab="json">{ } JSON Çıkarımı</button>
+    </div>
+    <div id="detay-kaynak" class="modal-body"></div>
+    <pre id="detay-json" class="modal-body json-view" style="display:none"></pre>
+  </div>
+</div>
+<script src="/static/js/app.js?v=7"></script>
 </body>
 </html>

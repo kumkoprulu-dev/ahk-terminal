@@ -87,6 +87,35 @@ tbody tr:hover{background:rgba(47,129,247,.06)}
 .spin{display:inline-block;animation:sp 1s linear infinite}
 @keyframes sp{to{transform:rotate(360deg)}}
 
+/* Karşılaştırma skoru */
+.skor-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px}
+.skor-card{background:var(--panel2);border:1px solid var(--line);border-radius:12px;padding:13px;border-left:3px solid var(--accent)}
+.sk-label{font-size:11.5px;color:var(--muted);text-transform:uppercase;letter-spacing:.3px}
+.sk-bank{font-weight:700;font-size:14px;margin-top:5px}
+.sk-val{font-size:20px;font-weight:800;color:var(--accent);margin:2px 0}
+.sk-urun{font-size:11.5px;color:var(--muted)}
+tr.clickable{cursor:pointer}
+
+/* Detay modalı */
+.modal-overlay{position:fixed;inset:0;background:rgba(4,8,18,.72);backdrop-filter:blur(3px);z-index:50;align-items:center;justify-content:center;padding:20px}
+.modal{background:var(--panel);border:1px solid var(--line);border-radius:16px;width:min(680px,96vw);max-height:88vh;display:flex;flex-direction:column;box-shadow:var(--shadow)}
+.modal-head{display:flex;justify-content:space-between;align-items:center;padding:16px 18px;border-bottom:1px solid var(--line)}
+.modal-head h3{font-size:16px;color:var(--accent)}
+.modal-tabs{display:flex;gap:8px;padding:12px 18px 0}
+.modal-tabs .tab{cursor:pointer;background:transparent;border:1px solid var(--line);color:var(--muted);padding:7px 12px;border-radius:8px;font-size:13px;font-weight:600}
+.modal-tabs .tab.active{color:var(--txt);border-color:var(--accent);background:rgba(22,199,154,.1)}
+.modal-body{padding:14px 18px;overflow-y:auto}
+.kaynak-banner{background:var(--panel2);border:1px solid var(--line);border-radius:10px;padding:10px 12px;font-size:12.5px;margin-bottom:12px;word-break:break-all}
+.kaynak-banner a{color:var(--accent2);text-decoration:none}
+.kaynak-banner .mini{display:block;margin-top:4px}
+.alan{padding:9px 0;border-bottom:1px dashed var(--line)}
+.alan-ust{display:flex;align-items:center;gap:10px}
+.alan-ad{color:var(--muted);font-size:12.5px;min-width:160px}
+.alan-deg{font-weight:700;color:var(--txt)}
+.alan-guv{margin-left:auto;font-size:11px;color:var(--accent);background:rgba(22,199,154,.12);padding:2px 7px;border-radius:8px}
+.alan-alinti{margin-top:5px;font-size:12px;color:var(--muted);font-style:italic;line-height:1.5}
+.json-view{font-family:Consolas,Monaco,monospace;font-size:12px;color:#cfe;white-space:pre-wrap;line-height:1.45}
+
 /* ---- Tablet ---- */
 @media(max-width:1100px){
   .grid{grid-template-columns:1fr}

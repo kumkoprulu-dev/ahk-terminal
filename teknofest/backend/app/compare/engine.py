@@ -84,6 +84,47 @@ def getiri_hesapla(anapara: float, yillik_oran_yuzde: float, vade_gun: int) -> d
     }
 
 
+def skor_tablosu(urunler: list[KatilimUrunu]) -> dict:
+    """Şartname 5.7 karşılaştırma kriterleri — kategori 'kazananları'.
+
+    Katılım nüansı: MEVDUAT/katılma hesabında yüksek kâr payı iyidir;
+    FİNANSMAN'da DÜŞÜK kâr payı iyidir (şartname örneği). Ayrı ele alınır.
+    """
+    flat = [u.to_flat() for u in urunler]
+
+    def _pick(key, *, reverse, filt=None):
+        pool = [r for r in flat if r.get(key) is not None and (filt is None or filt(r))]
+        if not pool:
+            return None
+        return sorted(pool, key=lambda r: r[key], reverse=reverse)[0]
+
+    def _mevduat(r):
+        return r["urun_tipi"] in ("katilma_hesabi", "altin_hesabi", "doviz_katilma")
+
+    def _finansman(r):
+        return r["urun_tipi"] == "finansman"
+
+    en_avantajli = None
+    pool_av = [r for r in flat if r.get("avantajlar")]
+    if pool_av:
+        en_avantajli = max(pool_av, key=lambda r: len(r["avantajlar"]))
+
+    return {
+        "en_yuksek_kar_payi_mevduat": _pick("kar_payi_orani", reverse=True, filt=_mevduat),
+        "en_dusuk_kar_payi_finansman": _pick("kar_payi_orani", reverse=False, filt=_finansman),
+        "en_uzun_vade": _pick("vade_gun", reverse=True),
+        "en_dusuk_asgari_tutar": _pick("min_tutar", reverse=False),
+        "en_avantajli_kampanya": en_avantajli,
+        "kriterler": [
+            "En yüksek kâr payı (mevduat/katılma)",
+            "En düşük kâr payı (finansman)",
+            "En uzun vade",
+            "En düşük asgari tutar",
+            "En avantajlı (en çok avantaj)",
+        ],
+    }
+
+
 def ozet(urunler: list[KatilimUrunu]) -> dict:
     rows = _flat(urunler)
     bankalar = sorted({r["banka"] for r in rows})

@@ -112,6 +112,21 @@ def karsilastir(urun_tipi: str | None = None):
     return compare.karsilastir(_load(), urun_tipi=urun_tipi)
 
 
+@router.get("/skor")
+def skor():
+    """Şartname 5.7 — karşılaştırma kriterleri kazananları."""
+    return compare.skor_tablosu(_load())
+
+
+@router.get("/urun/detay")
+def urun_detay(banka: str, urun_adi: str):
+    """Tek ürünün tam grounding'li JSON çıkarımı (alan→değer→kaynak alıntı)."""
+    for p in store.list_urunler():
+        if p.get("banka") == banka and p.get("urun_adi") == urun_adi:
+            return p
+    return {"hata": "ürün bulunamadı"}
+
+
 class ChatBody(BaseModel):
     soru: str
     use_llm: bool = True
