@@ -77,8 +77,10 @@ def extract_from_tables(tables: list[Table]) -> dict:
                         if m:
                             val = float(m.group(1).replace(",", "."))
                             if val > 0 and "kar_payi_orani" not in res:
+                                cap = t.caption or "Oran tablosu"
                                 res["kar_payi_orani"] = Grounded(
-                                    value=val, source_quote=t.to_markdown()[:200], confidence=0.85)
+                                    value=val, source_quote=f"{cap}: {h} %{m.group(1)}",
+                                    confidence=0.85)
 
         # 2) Paylaşım oranı ızgarası (kademe × vade → 90-10)
         if "paylaşım" in t.caption.lower() or "paylasim" in t.caption.lower() \
@@ -95,8 +97,10 @@ def extract_from_tables(tables: list[Table]) -> dict:
                     etiket = f"{musteri}-{banka}"
                     vade_h = t.headers[mat_idx] if (mat_idx is not None and mat_idx < len(t.headers)) else ""
                     note = f"{etiket} ({kademe}{', ' + vade_h if vade_h else ''})".strip()
+                    cap = t.caption or "Kâr paylaşım oranları"
+                    quote = f"{cap}: {kademe} {vade_h} → {etiket}".replace("  ", " ").strip()
                     res["paylasim_orani"] = Grounded(
-                        value=note, source_quote=t.to_markdown()[:240], confidence=0.85)
+                        value=note, source_quote=quote, confidence=0.85)
                     break
 
         # 3) Asgari tutar (Açılış/Alt Bakiye sütunu)
@@ -112,6 +116,8 @@ def extract_from_tables(tables: list[Table]) -> dict:
                             except ValueError:
                                 pass
                 if vals:
+                    cap = t.caption or "Oran tablosu"
                     res["min_tutar"] = Grounded(
-                        value=min(vals), source_quote=t.to_markdown()[:200], confidence=0.7)
+                        value=min(vals), source_quote=f"{cap}: {h} asgari {min(vals):,.0f}",
+                        confidence=0.7)
     return res

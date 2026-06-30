@@ -120,8 +120,22 @@ def extract_page(banka: str, page, *, provider: LLMProvider | None = None) -> Ka
 
     provider = provider or get_provider()
     md = tbl.tables_markdown(page.tables)
-    combined = (f"KÂR PAYI / ORAN TABLOLARI:\n{md}\n\n" if md else "") + (page.text or "")
+    # Tablo markdown'ı YALNIZ LLM'e verilir (LLM tabloyu iyi okur). Kural/mock
+    # motoruna verilmez — aksi halde pipe'lı tablo metni gürültü/çirkin alıntı üretir.
+    if md and provider.name not in ("mock",):
+        combined = f"KÂR PAYI / ORAN TABLOLARI:\n{md}\n\n{page.text or ''}"
+    else:
+        combined = page.text or ""
     u = extract_one(banka, combined, url=page.url, urun_adi=page.title or None, provider=provider)
+
+    # Ürün tipini BAŞLIKTAN önceliklendir: gövdedeki "Altın/Gümüş" kademe adları
+    # bir TL katılma hesabını yanlışlıkla "altın hesabı" sınıflamasın.
+    if page.title:
+        from . import rules as _rules
+        from .schema import UrunTipi
+        tip_title = _rules.detect_urun_tipi(page.title)
+        if tip_title != UrunTipi.diger:
+            u.urun_tipi = tip_title
 
     tex = tbl.extract_from_tables(page.tables)
     pay = tex.get("paylasim_orani")

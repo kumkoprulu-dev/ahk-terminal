@@ -65,6 +65,16 @@ def _fmt_urun(r: dict) -> str:
     return " · ".join(parts)
 
 
+def _temiz_alinti(q: str | None) -> str | None:
+    """Kaynak alıntısını okunur kıl: pipe'lı tablo/çok satırlı blokları sadeleştir."""
+    if not q:
+        return q
+    q = re.sub(r"\s+", " ", q.replace("|", " ").replace("\n", " ")).strip()
+    if len(q) > 160:
+        q = q[:157].rstrip() + "…"
+    return q
+
+
 def _kaynaklar_for(rows: list[dict]) -> list[dict]:
     """Ürün satırları için kaynak alıntıları topla."""
     from .. import store
@@ -78,8 +88,10 @@ def _kaynaklar_for(rows: list[dict]) -> list[dict]:
         if not p:
             continue
         u = KatilimUrunu.model_validate(p)
-        q = u.kar_payi_orani.source_quote or u.vade_gun.source_quote
-        out.append({"banka": u.banka, "urun": u.urun_adi, "url": u.kaynak_url, "alinti": q})
+        q = (u.paylasim_orani.source_quote or u.kar_payi_orani.source_quote
+             or u.vade_gun.source_quote)
+        out.append({"banka": u.banka, "urun": u.urun_adi, "url": u.kaynak_url,
+                    "alinti": _temiz_alinti(q)})
     return out
 
 
