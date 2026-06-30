@@ -147,6 +147,16 @@ def extract_page(banka: str, page, *, provider: LLMProvider | None = None) -> Ka
     mt = tex.get("min_tutar")
     if mt and mt.value and u.min_tutar.value is None:
         u.min_tutar = mt
+
+    # Div-tabanlı etiket-değer oranları (tablo yoksa): "Brüt Oran %32,33" vb.
+    from . import labeled
+    lab = labeled.extract_labeled_rates(page.text or "")
+    lbr = lab.get("kar_payi_orani")
+    if lbr and lbr.value and not u.kar_payi_orani.grounded:
+        u.kar_payi_orani = lbr
+    lnet = lab.get("kar_payi_orani_net")
+    if lnet and lnet.value and not u.kar_payi_orani_net.grounded:
+        u.kar_payi_orani_net = lnet
     return u
 
 
