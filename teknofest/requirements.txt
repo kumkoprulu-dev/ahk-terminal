@@ -9,3 +9,6 @@ pytest>=8.0
 # Opsiyonel LLM omurgaları:
 #   claude → API anahtarı yeterli (httpx ile doğrudan, ek paket yok)
 #   ollama → yerel kurulum (https://ollama.com) + `ollama pull llama3.1:8b`
+# Opsiyonel: JS-SPA bankaları (ör. Emlak) için headless render
+#   pip install playwright && python -m playwright install chromium
+#   Kurulu değilse sistem otomatik örnek-fallback'e düşer (graceful).

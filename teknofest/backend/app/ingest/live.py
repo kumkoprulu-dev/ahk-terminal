@@ -41,9 +41,16 @@ def ingest_live(provider: LLMProvider | None = None, sources: list[LiveSource] |
 
     sonuc = []
     urunler = []
+    from .scraper import render_page
+
     for s in sources:
         page = fetch_page(s.url)
-        kaynak = "canli"
+        # httpx ince/boş döndüyse ve sayfa JS-SPA ise Playwright ile RENDER dene
+        if (not page.ok or len(page.text) < MIN_USABLE_LEN) and s.render_required:
+            rendered = render_page(s.url)
+            if rendered.ok and len(rendered.text) >= MIN_USABLE_LEN:
+                page = rendered
+        kaynak = "canli-render" if (s.render_required and page.ok and len(page.text) >= MIN_USABLE_LEN) else "canli"
         metin = page.text
         title = page.title or s.urun_adi
 

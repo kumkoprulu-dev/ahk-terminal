@@ -78,6 +78,30 @@ def fetch_clean(url: str, timeout: float = 20.0) -> str:
     return fetch_page(url, timeout).text
 
 
+def render_page(url: str, timeout_ms: int = 30000) -> Page:
+    """JS-SPA sayfalarını Playwright ile RENDER edip çıkar.
+
+    Playwright kurulu değilse veya hata olursa boş Page döner (çağıran taraf
+    örnek-fallback'e düşer). httpx içerik vermeyen bankalar (ör. Emlak) için.
+    """
+    try:
+        from playwright.sync_api import sync_playwright
+    except Exception:
+        return Page(url=url, ok=False, status=None)
+    try:
+        with sync_playwright() as p:
+            browser = p.chromium.launch(headless=True)
+            pg = browser.new_page(user_agent=_UA)
+            pg.goto(url, timeout=timeout_ms, wait_until="networkidle")
+            html = pg.content()
+            browser.close()
+    except Exception:
+        return Page(url=url, ok=False, status=None)
+    title, text, chunks, tables = _parse(html)
+    return Page(url=url, title=title, text=text, chunks=chunks, tables=tables,
+                ok=bool(text), status=200)
+
+
 def _is_noise(el) -> bool:
     attrs = getattr(el, "attrs", None)
     if not attrs:
