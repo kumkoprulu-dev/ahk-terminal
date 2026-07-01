@@ -1,0 +1,933 @@
+{
+  "aciklama": "Grounding-li yapilandirilmis cikarim (kar payi, vade, tahsis, kampanya turu, hedef kitle vb.)",
+  "urun_sayisi": 10,
+  "urunler": [
+    {
+      "banka": "Kuveyt Türk",
+      "urun_adi": "Katılma Hesabı",
+      "urun_tipi": "katilma_hesabi",
+      "kar_payi_orani": {
+        "value": 48.0,
+        "source_quote": "32 gün vadeli TL katılma hesabında brüt yıllık kâr payı oranı %48 olarak gerçekleşmektedir.",
+        "confidence": 0.9
+      },
+      "kar_payi_orani_net": {
+        "value": null,
+        "source_quote": null,
+        "confidence": 0.0
+      },
+      "paylasim_orani": {
+        "value": null,
+        "source_quote": null,
+        "confidence": 0.0
+      },
+      "vade_gun": {
+        "value": 32,
+        "source_quote": "32 gün vadeli TL katılma hesabında brüt yıllık kâr payı oranı %48 olarak gerçekleşmektedir.",
+        "confidence": 0.9
+      },
+      "para_birimi": {
+        "value": "TRY",
+        "source_quote": "32 gün vadeli TL katılma hesabında brüt yıllık kâr payı oranı %48 olarak gerçekleşmektedir.",
+        "confidence": 0.8
+      },
+      "min_tutar": {
+        "value": 1000.0,
+        "source_quote": "Hesap açmak için minimum 1.000 TL tutar yeterlidir; üst limit bulunmamaktadır.",
+        "confidence": 0.8
+      },
+      "max_tutar": {
+        "value": 1000.0,
+        "source_quote": "Hesap açmak için minimum 1.000 TL tutar yeterlidir; üst limit bulunmamaktadır.",
+        "confidence": 0.8
+      },
+      "finansman_tutari": {
+        "value": null,
+        "source_quote": null,
+        "confidence": 0.0
+      },
+      "taksit_sayisi": {
+        "value": null,
+        "source_quote": null,
+        "confidence": 0.0
+      },
+      "tahsis_ucreti": {
+        "value": null,
+        "source_quote": null,
+        "confidence": 0.0
+      },
+      "masrafsiz": false,
+      "kampanya_turu": "—",
+      "odul_miktari": {
+        "value": null,
+        "source_quote": null,
+        "confidence": 0.0
+      },
+      "indirim_orani": {
+        "value": null,
+        "source_quote": null,
+        "confidence": 0.0
+      },
+      "alisveris_puani": {
+        "value": null,
+        "source_quote": null,
+        "confidence": 0.0
+      },
+      "hedef_kitle": [],
+      "avantajlar": [
+        "Dijital/mobil açılış",
+        "İlave kâr payı avantajı"
+      ],
+      "kosullar": [],
+      "kampanya": true,
+      "kampanya_baslangic": {
+        "value": null,
+        "source_quote": null,
+        "confidence": 0.0
+      },
+      "kampanya_bitis": {
+        "value": "2026-07-31",
+        "source_quote": "Kampanya 31 Temmuz 2026 tarihine kadar geçerlidir.",
+        "confidence": 0.85
+      },
+      "kaynak_url": "https://www.kuveytturk.com.tr/ornek/katilma-hesabi",
+      "cekildigi_tarih": "2026-07-01"
+    },
+    {
+      "banka": "Albaraka Türk",
+      "urun_adi": "Altın Katılma Hesabı",
+      "urun_tipi": "altin_hesabi",
+      "kar_payi_orani": {
+        "value": 3.25,
+        "source_quote": "90 gün vadeli altın katılma hesabında yıllık kâr payı oranı brüt %3,25'tir.",
+        "confidence": 0.79
+      },
+      "kar_payi_orani_net": {
+        "value": null,
+        "source_quote": null,
+        "confidence": 0.0
+      },
+      "paylasim_orani": {
+        "value": null,
+        "source_quote": null,
+        "confidence": 0.0
+      },
+      "vade_gun": {
+        "value": 90,
+        "source_quote": "90 gün vadeli altın katılma hesabında yıllık kâr payı oranı brüt %3,25'tir.",
+        "confidence": 0.9
+      },
+      "para_birimi": {
+        "value": "XAU",
+        "source_quote": "Altın Katılma Hesabı, gram altın bazında birikim yapmanızı sağlar.",
+        "confidence": 0.8
+      },
+      "min_tutar": {
+        "value": 1.0,
+        "source_quote": "Minimum 1 gram altın ile hesap açabilirsiniz.",
+        "confidence": 0.8
+      },
+      "max_tutar": {
+        "value": null,
+        "source_quote": null,
+        "confidence": 0.0
+      },
+      "finansman_tutari": {
+        "value": null,
+        "source_quote": null,
+        "confidence": 0.0
+      },
+      "taksit_sayisi": {
+        "value": null,
+        "source_quote": null,
+        "confidence": 0.0
+      },
+      "tahsis_ucreti": {
+        "value": "alınmaz",
+        "source_quote": "Hesap işletim ücreti alınmaz.",
+        "confidence": 0.85
+      },
+      "masrafsiz": true,
+      "kampanya_turu": "—",
+      "odul_miktari": {
+        "value": null,
+        "source_quote": null,
+        "confidence": 0.0
+      },
+      "indirim_orani": {
+        "value": null,
+        "source_quote": null,
+        "confidence": 0.0
+      },
+      "alisveris_puani": {
+        "value": null,
+        "source_quote": null,
+        "confidence": 0.0
+      },
+      "hedef_kitle": [],
+      "avantajlar": [
+        "Masraf/ücret yok",
+        "Dijital/mobil açılış",
+        "Fiziki altın teslimi"
+      ],
+      "kosullar": [],
+      "kampanya": false,
+      "kampanya_baslangic": {
+        "value": null,
+        "source_quote": null,
+        "confidence": 0.0
+      },
+      "kampanya_bitis": {
+        "value": null,
+        "source_quote": null,
+        "confidence": 0.0
+      },
+      "kaynak_url": "https://www.albaraka.com.tr/ornek/altin-katilma",
+      "cekildigi_tarih": "2026-07-01"
+    },
+    {
+      "banka": "Türkiye Finans",
+      "urun_adi": "Dolar (USD) katılma hesabı",
+      "urun_tipi": "doviz_katilma",
+      "kar_payi_orani": {
+        "value": 4.75,
+        "source_quote": "180 gün vade için yıllık brüt kâr payı oranı %4,75 seviyesindedir.",
+        "confidence": 0.9
+      },
+      "kar_payi_orani_net": {
+        "value": null,
+        "source_quote": null,
+        "confidence": 0.0
+      },
+      "paylasim_orani": {
+        "value": null,
+        "source_quote": null,
+        "confidence": 0.0
+      },
+      "vade_gun": {
+        "value": 180,
+        "source_quote": "180 gün vade için yıllık brüt kâr payı oranı %4,75 seviyesindedir.",
+        "confidence": 0.9
+      },
+      "para_birimi": {
+        "value": "USD",
+        "source_quote": "Dolar (USD) katılma hesabı ile döviz birikimlerinizi değerlendirin.",
+        "confidence": 0.8
+      },
+      "min_tutar": {
+        "value": 100.0,
+        "source_quote": "Asgari hesap açılış tutarı 100 USD'dir.",
+        "confidence": 0.8
+      },
+      "max_tutar": {
+        "value": null,
+        "source_quote": null,
+        "confidence": 0.0
+      },
+      "finansman_tutari": {
+        "value": null,
+        "source_quote": null,
+        "confidence": 0.0
+      },
+      "taksit_sayisi": {
+        "value": null,
+        "source_quote": null,
+        "confidence": 0.0
+      },
+      "tahsis_ucreti": {
+        "value": null,
+        "source_quote": null,
+        "confidence": 0.0
+      },
+      "masrafsiz": false,
+      "kampanya_turu": "Yeni Müşteri Kampanyası",
+      "odul_miktari": {
+        "value": null,
+        "source_quote": null,
+        "confidence": 0.0
+      },
+      "indirim_orani": {
+        "value": null,
+        "source_quote": null,
+        "confidence": 0.0
+      },
+      "alisveris_puani": {
+        "value": null,
+        "source_quote": null,
+        "confidence": 0.0
+      },
+      "hedef_kitle": [
+        "Yeni müşteri"
+      ],
+      "avantajlar": [
+        "İlave kâr payı avantajı"
+      ],
+      "kosullar": [
+        "Yeni müşteri / yeni para koşulu",
+        "Vade öncesi çekimde kâr payı kısıtı"
+      ],
+      "kampanya": true,
+      "kampanya_baslangic": {
+        "value": null,
+        "source_quote": null,
+        "confidence": 0.0
+      },
+      "kampanya_bitis": {
+        "value": "2026-08-15",
+        "source_quote": "Kampanya 15 Ağustos 2026'da sona erer.",
+        "confidence": 0.85
+      },
+      "kaynak_url": "https://www.turkiyefinans.com.tr/ornek/doviz-katilma",
+      "cekildigi_tarih": "2026-07-01"
+    },
+    {
+      "banka": "Ziraat Katılım",
+      "urun_adi": "Konut Finansmanı (faizsiz)",
+      "urun_tipi": "finansman",
+      "kar_payi_orani": {
+        "value": 2.89,
+        "source_quote": "Aylık kâr payı oranı %2,89'dan başlamaktadır.",
+        "confidence": 0.79
+      },
+      "kar_payi_orani_net": {
+        "value": null,
+        "source_quote": null,
+        "confidence": 0.0
+      },
+      "paylasim_orani": {
+        "value": null,
+        "source_quote": null,
+        "confidence": 0.0
+      },
+      "vade_gun": {
+        "value": 3600,
+        "source_quote": "120 ay vadeye kadar finansman imkânı sunulmaktadır.",
+        "confidence": 0.8
+      },
+      "para_birimi": {
+        "value": null,
+        "source_quote": null,
+        "confidence": 0.0
+      },
+      "min_tutar": {
+        "value": null,
+        "source_quote": null,
+        "confidence": 0.0
+      },
+      "max_tutar": {
+        "value": null,
+        "source_quote": null,
+        "confidence": 0.0
+      },
+      "finansman_tutari": {
+        "value": null,
+        "source_quote": null,
+        "confidence": 0.0
+      },
+      "taksit_sayisi": {
+        "value": 120,
+        "source_quote": "120 ay vadeye kadar finansman imkânı sunulmaktadır.",
+        "confidence": 0.7
+      },
+      "tahsis_ucreti": {
+        "value": "alınmaz",
+        "source_quote": "Dosya masrafı alınmaz.",
+        "confidence": 0.85
+      },
+      "masrafsiz": true,
+      "kampanya_turu": "Konut Finansmanı Kampanyası",
+      "odul_miktari": {
+        "value": null,
+        "source_quote": null,
+        "confidence": 0.0
+      },
+      "indirim_orani": {
+        "value": null,
+        "source_quote": null,
+        "confidence": 0.0
+      },
+      "alisveris_puani": {
+        "value": null,
+        "source_quote": null,
+        "confidence": 0.0
+      },
+      "hedef_kitle": [
+        "Maaş müşterisi",
+        "Emekli"
+      ],
+      "avantajlar": [
+        "Emekli/maaş müşterisine özel"
+      ],
+      "kosullar": [],
+      "kampanya": false,
+      "kampanya_baslangic": {
+        "value": null,
+        "source_quote": null,
+        "confidence": 0.0
+      },
+      "kampanya_bitis": {
+        "value": null,
+        "source_quote": null,
+        "confidence": 0.0
+      },
+      "kaynak_url": "https://www.ziraatkatilim.com.tr/ornek/konut-finansmani",
+      "cekildigi_tarih": "2026-07-01"
+    },
+    {
+      "banka": "Vakıf Katılım",
+      "urun_adi": "TL Katılma Hesabı",
+      "urun_tipi": "katilma_hesabi",
+      "kar_payi_orani": {
+        "value": 50.0,
+        "source_quote": "32 günlük vadede yeni gelen birikimlere brüt yıllık %50 kâr payı oranı uygulanır.",
+        "confidence": 0.9
+      },
+      "kar_payi_orani_net": {
+        "value": 46.0,
+        "source_quote": "Stopaj sonrası net kâr payı oranı yaklaşık %46'dır.",
+        "confidence": 0.85
+      },
+      "paylasim_orani": {
+        "value": null,
+        "source_quote": null,
+        "confidence": 0.0
+      },
+      "vade_gun": {
+        "value": 32,
+        "source_quote": "32 günlük vadede yeni gelen birikimlere brüt yıllık %50 kâr payı oranı uygulanır.",
+        "confidence": 0.9
+      },
+      "para_birimi": {
+        "value": "TRY",
+        "source_quote": "TL Katılma Hesabı kampanyası!",
+        "confidence": 0.8
+      },
+      "min_tutar": {
+        "value": 10000.0,
+        "source_quote": "Minimum tutar 10.000 TL, azami tutar 5.000.000 TL'dir.",
+        "confidence": 0.8
+      },
+      "max_tutar": {
+        "value": 5000000.0,
+        "source_quote": "Minimum tutar 10.000 TL, azami tutar 5.000.000 TL'dir.",
+        "confidence": 0.8
+      },
+      "finansman_tutari": {
+        "value": null,
+        "source_quote": null,
+        "confidence": 0.0
+      },
+      "taksit_sayisi": {
+        "value": null,
+        "source_quote": null,
+        "confidence": 0.0
+      },
+      "tahsis_ucreti": {
+        "value": null,
+        "source_quote": null,
+        "confidence": 0.0
+      },
+      "masrafsiz": false,
+      "kampanya_turu": "Yeni Müşteri Kampanyası",
+      "odul_miktari": {
+        "value": null,
+        "source_quote": null,
+        "confidence": 0.0
+      },
+      "indirim_orani": {
+        "value": null,
+        "source_quote": null,
+        "confidence": 0.0
+      },
+      "alisveris_puani": {
+        "value": null,
+        "source_quote": null,
+        "confidence": 0.0
+      },
+      "hedef_kitle": [
+        "Yeni müşteri"
+      ],
+      "avantajlar": [],
+      "kosullar": [
+        "Yeni müşteri / yeni para koşulu"
+      ],
+      "kampanya": true,
+      "kampanya_baslangic": {
+        "value": null,
+        "source_quote": null,
+        "confidence": 0.0
+      },
+      "kampanya_bitis": {
+        "value": "2026-09-30",
+        "source_quote": "Kampanya 30 Eylül 2026 tarihine kadar sürer.",
+        "confidence": 0.85
+      },
+      "kaynak_url": "https://www.vakifkatilim.com.tr/ornek/katilma-hesabi",
+      "cekildigi_tarih": "2026-07-01"
+    },
+    {
+      "banka": "Emlak Katılım",
+      "urun_adi": "Günlük Altın Hesabı",
+      "urun_tipi": "altin_hesabi",
+      "kar_payi_orani": {
+        "value": 2.1,
+        "source_quote": "Vade 7 gün, yıllık brüt kâr payı oranı altında %2,10'dur.",
+        "confidence": 0.9
+      },
+      "kar_payi_orani_net": {
+        "value": null,
+        "source_quote": null,
+        "confidence": 0.0
+      },
+      "paylasim_orani": {
+        "value": null,
+        "source_quote": null,
+        "confidence": 0.0
+      },
+      "vade_gun": {
+        "value": 7,
+        "source_quote": "Vade 7 gün, yıllık brüt kâr payı oranı altında %2,10'dur.",
+        "confidence": 0.9
+      },
+      "para_birimi": {
+        "value": "XAU",
+        "source_quote": "Günlük Altın Hesabı ile her gün kâr payı kazanın.",
+        "confidence": 0.8
+      },
+      "min_tutar": {
+        "value": 0.1,
+        "source_quote": "0,1 gram altından başlayan tutarlarla hesap açılabilir.",
+        "confidence": 0.8
+      },
+      "max_tutar": {
+        "value": null,
+        "source_quote": null,
+        "confidence": 0.0
+      },
+      "finansman_tutari": {
+        "value": null,
+        "source_quote": null,
+        "confidence": 0.0
+      },
+      "taksit_sayisi": {
+        "value": null,
+        "source_quote": null,
+        "confidence": 0.0
+      },
+      "tahsis_ucreti": {
+        "value": null,
+        "source_quote": null,
+        "confidence": 0.0
+      },
+      "masrafsiz": false,
+      "kampanya_turu": "—",
+      "odul_miktari": {
+        "value": null,
+        "source_quote": null,
+        "confidence": 0.0
+      },
+      "indirim_orani": {
+        "value": null,
+        "source_quote": null,
+        "confidence": 0.0
+      },
+      "alisveris_puani": {
+        "value": null,
+        "source_quote": null,
+        "confidence": 0.0
+      },
+      "hedef_kitle": [],
+      "avantajlar": [
+        "Dijital/mobil açılış",
+        "Esnek/erken çekim"
+      ],
+      "kosullar": [],
+      "kampanya": false,
+      "kampanya_baslangic": {
+        "value": null,
+        "source_quote": null,
+        "confidence": 0.0
+      },
+      "kampanya_bitis": {
+        "value": null,
+        "source_quote": null,
+        "confidence": 0.0
+      },
+      "kaynak_url": "https://www.emlakkatilim.com.tr/ornek/altin-gunluk",
+      "cekildigi_tarih": "2026-07-01"
+    },
+    {
+      "banka": "Hayat Finans",
+      "urun_adi": "e-Katılma Hesabı tamamen dijital açılır.",
+      "urun_tipi": "katilma_hesabi",
+      "kar_payi_orani": {
+        "value": 49.0,
+        "source_quote": "32 gün vadeli TL katılma hesabında yeni müşterilere özel brüt yıllık kâr payı oranı %49'dur.",
+        "confidence": 0.9
+      },
+      "kar_payi_orani_net": {
+        "value": null,
+        "source_quote": null,
+        "confidence": 0.0
+      },
+      "paylasim_orani": {
+        "value": null,
+        "source_quote": null,
+        "confidence": 0.0
+      },
+      "vade_gun": {
+        "value": 32,
+        "source_quote": "32 gün vadeli TL katılma hesabında yeni müşterilere özel brüt yıllık kâr payı oranı %49'dur.",
+        "confidence": 0.9
+      },
+      "para_birimi": {
+        "value": "TRY",
+        "source_quote": "32 gün vadeli TL katılma hesabında yeni müşterilere özel brüt yıllık kâr payı oranı %49'dur.",
+        "confidence": 0.8
+      },
+      "min_tutar": {
+        "value": 100.0,
+        "source_quote": "Minimum 100 TL ile hesap açabilirsiniz.",
+        "confidence": 0.8
+      },
+      "max_tutar": {
+        "value": null,
+        "source_quote": null,
+        "confidence": 0.0
+      },
+      "finansman_tutari": {
+        "value": null,
+        "source_quote": null,
+        "confidence": 0.0
+      },
+      "taksit_sayisi": {
+        "value": null,
+        "source_quote": null,
+        "confidence": 0.0
+      },
+      "tahsis_ucreti": {
+        "value": "alınmaz",
+        "source_quote": "Uygulamadan açılışta hiçbir masraf alınmaz.",
+        "confidence": 0.85
+      },
+      "masrafsiz": true,
+      "kampanya_turu": "Yeni Müşteri Kampanyası",
+      "odul_miktari": {
+        "value": null,
+        "source_quote": null,
+        "confidence": 0.0
+      },
+      "indirim_orani": {
+        "value": null,
+        "source_quote": null,
+        "confidence": 0.0
+      },
+      "alisveris_puani": {
+        "value": null,
+        "source_quote": null,
+        "confidence": 0.0
+      },
+      "hedef_kitle": [
+        "Yeni müşteri"
+      ],
+      "avantajlar": [
+        "Masraf/ücret yok",
+        "Dijital/mobil açılış"
+      ],
+      "kosullar": [
+        "Yeni müşteri / yeni para koşulu"
+      ],
+      "kampanya": true,
+      "kampanya_baslangic": {
+        "value": null,
+        "source_quote": null,
+        "confidence": 0.0
+      },
+      "kampanya_bitis": {
+        "value": "2026-09-30",
+        "source_quote": "Kampanya 30 Eylül 2026 tarihine kadar geçerlidir.",
+        "confidence": 0.85
+      },
+      "kaynak_url": "https://www.hayatfinans.com.tr/ornek/e-katilma",
+      "cekildigi_tarih": "2026-07-01"
+    },
+    {
+      "banka": "TOM Katılım",
+      "urun_adi": "TOM Katılma Hesabı",
+      "urun_tipi": "katilma_hesabi",
+      "kar_payi_orani": {
+        "value": 47.5,
+        "source_quote": "45 gün vade için brüt yıllık kâr payı oranı %47,5 olarak uygulanır.",
+        "confidence": 0.9
+      },
+      "kar_payi_orani_net": {
+        "value": null,
+        "source_quote": null,
+        "confidence": 0.0
+      },
+      "paylasim_orani": {
+        "value": null,
+        "source_quote": null,
+        "confidence": 0.0
+      },
+      "vade_gun": {
+        "value": 45,
+        "source_quote": "45 gün vade için brüt yıllık kâr payı oranı %47,5 olarak uygulanır.",
+        "confidence": 0.9
+      },
+      "para_birimi": {
+        "value": "TRY",
+        "source_quote": "Asgari tutar 1.000 TL'dir.",
+        "confidence": 0.8
+      },
+      "min_tutar": {
+        "value": 1000.0,
+        "source_quote": "Asgari tutar 1.000 TL'dir.",
+        "confidence": 0.8
+      },
+      "max_tutar": {
+        "value": null,
+        "source_quote": null,
+        "confidence": 0.0
+      },
+      "finansman_tutari": {
+        "value": null,
+        "source_quote": null,
+        "confidence": 0.0
+      },
+      "taksit_sayisi": {
+        "value": null,
+        "source_quote": null,
+        "confidence": 0.0
+      },
+      "tahsis_ucreti": {
+        "value": null,
+        "source_quote": null,
+        "confidence": 0.0
+      },
+      "masrafsiz": false,
+      "kampanya_turu": "Yeni Müşteri Kampanyası",
+      "odul_miktari": {
+        "value": null,
+        "source_quote": null,
+        "confidence": 0.0
+      },
+      "indirim_orani": {
+        "value": null,
+        "source_quote": null,
+        "confidence": 0.0
+      },
+      "alisveris_puani": {
+        "value": null,
+        "source_quote": null,
+        "confidence": 0.0
+      },
+      "hedef_kitle": [
+        "Yeni müşteri"
+      ],
+      "avantajlar": [
+        "Dijital/mobil açılış"
+      ],
+      "kosullar": [
+        "Yeni müşteri / yeni para koşulu"
+      ],
+      "kampanya": false,
+      "kampanya_baslangic": {
+        "value": null,
+        "source_quote": null,
+        "confidence": 0.0
+      },
+      "kampanya_bitis": {
+        "value": null,
+        "source_quote": null,
+        "confidence": 0.0
+      },
+      "kaynak_url": "https://www.tombank.com.tr/ornek/tom-katilma",
+      "cekildigi_tarih": "2026-07-01"
+    },
+    {
+      "banka": "Dünya Katılım",
+      "urun_adi": "Konut Finansmanı (faizsiz)",
+      "urun_tipi": "finansman",
+      "kar_payi_orani": {
+        "value": 2.79,
+        "source_quote": "120 ay vadeye kadar finansman; aylık kâr payı oranı %2,79'dan başlar.",
+        "confidence": 0.79
+      },
+      "kar_payi_orani_net": {
+        "value": null,
+        "source_quote": null,
+        "confidence": 0.0
+      },
+      "paylasim_orani": {
+        "value": null,
+        "source_quote": null,
+        "confidence": 0.0
+      },
+      "vade_gun": {
+        "value": 3600,
+        "source_quote": "120 ay vadeye kadar finansman; aylık kâr payı oranı %2,79'dan başlar.",
+        "confidence": 0.8
+      },
+      "para_birimi": {
+        "value": null,
+        "source_quote": null,
+        "confidence": 0.0
+      },
+      "min_tutar": {
+        "value": null,
+        "source_quote": null,
+        "confidence": 0.0
+      },
+      "max_tutar": {
+        "value": null,
+        "source_quote": null,
+        "confidence": 0.0
+      },
+      "finansman_tutari": {
+        "value": null,
+        "source_quote": null,
+        "confidence": 0.0
+      },
+      "taksit_sayisi": {
+        "value": 120,
+        "source_quote": "120 ay vadeye kadar finansman; aylık kâr payı oranı %2,79'dan başlar.",
+        "confidence": 0.7
+      },
+      "tahsis_ucreti": {
+        "value": null,
+        "source_quote": null,
+        "confidence": 0.0
+      },
+      "masrafsiz": false,
+      "kampanya_turu": "Konut Finansmanı Kampanyası",
+      "odul_miktari": {
+        "value": null,
+        "source_quote": null,
+        "confidence": 0.0
+      },
+      "indirim_orani": {
+        "value": null,
+        "source_quote": null,
+        "confidence": 0.0
+      },
+      "alisveris_puani": {
+        "value": null,
+        "source_quote": null,
+        "confidence": 0.0
+      },
+      "hedef_kitle": [
+        "Maaş müşterisi"
+      ],
+      "avantajlar": [
+        "Emekli/maaş müşterisine özel"
+      ],
+      "kosullar": [],
+      "kampanya": true,
+      "kampanya_baslangic": {
+        "value": null,
+        "source_quote": null,
+        "confidence": 0.0
+      },
+      "kampanya_bitis": {
+        "value": null,
+        "source_quote": null,
+        "confidence": 0.0
+      },
+      "kaynak_url": "https://www.dunyakatilim.com.tr/ornek/konut-finansmani",
+      "cekildigi_tarih": "2026-07-01"
+    },
+    {
+      "banka": "Adil Katılım",
+      "urun_adi": "Adil Altın Katılma Hesabı",
+      "urun_tipi": "altin_hesabi",
+      "kar_payi_orani": {
+        "value": 3.1,
+        "source_quote": "90 gün vadeli altın hesabında yıllık brüt kâr payı oranı %3,10'dur.",
+        "confidence": 0.9
+      },
+      "kar_payi_orani_net": {
+        "value": null,
+        "source_quote": null,
+        "confidence": 0.0
+      },
+      "paylasim_orani": {
+        "value": null,
+        "source_quote": null,
+        "confidence": 0.0
+      },
+      "vade_gun": {
+        "value": 90,
+        "source_quote": "90 gün vadeli altın hesabında yıllık brüt kâr payı oranı %3,10'dur.",
+        "confidence": 0.9
+      },
+      "para_birimi": {
+        "value": "XAU",
+        "source_quote": "Adil Altın Katılma Hesabı ile gram altın biriktirin.",
+        "confidence": 0.8
+      },
+      "min_tutar": {
+        "value": 1.0,
+        "source_quote": "Minimum 1 gram altın ile açılır.",
+        "confidence": 0.8
+      },
+      "max_tutar": {
+        "value": null,
+        "source_quote": null,
+        "confidence": 0.0
+      },
+      "finansman_tutari": {
+        "value": null,
+        "source_quote": null,
+        "confidence": 0.0
+      },
+      "taksit_sayisi": {
+        "value": null,
+        "source_quote": null,
+        "confidence": 0.0
+      },
+      "tahsis_ucreti": {
+        "value": "alınmaz",
+        "source_quote": "Hesap tamamen dijital, işletim ücreti alınmaz.",
+        "confidence": 0.85
+      },
+      "masrafsiz": true,
+      "kampanya_turu": "—",
+      "odul_miktari": {
+        "value": null,
+        "source_quote": null,
+        "confidence": 0.0
+      },
+      "indirim_orani": {
+        "value": null,
+        "source_quote": null,
+        "confidence": 0.0
+      },
+      "alisveris_puani": {
+        "value": null,
+        "source_quote": null,
+        "confidence": 0.0
+      },
+      "hedef_kitle": [],
+      "avantajlar": [
+        "Masraf/ücret yok",
+        "Dijital/mobil açılış",
+        "Fiziki altın teslimi"
+      ],
+      "kosullar": [],
+      "kampanya": false,
+      "kampanya_baslangic": {
+        "value": null,
+        "source_quote": null,
+        "confidence": 0.0
+      },
+      "kampanya_bitis": {
+        "value": null,
+        "source_quote": null,
+        "confidence": 0.0
+      },
+      "kaynak_url": "https://www.adilbank.com.tr/ornek/altin-katilma",
+      "cekildigi_tarih": "2026-07-01"
+    }
+  ]
+}

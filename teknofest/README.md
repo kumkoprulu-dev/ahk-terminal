@@ -7,6 +7,22 @@ analiz eder; kâr payı oranı, vade, tutar, avantaj ve kampanya bilgilerini
 **kaynak alıntısına bağlı** olarak çıkarır, yapılandırır, karşılaştırır ve bir
 **dashboard + akıllı asistan** üzerinden sunar.
 
+**Takım:** Berrak Zeka · **Lisans:** Apache License 2.0 · **Etiket:** `BilisimVadisi2026`
+
+---
+
+## Açık Kaynak & Veri Seti (şartname 8, 9)
+
+- **Lisans:** Apache License 2.0 — bkz. [`LICENSE`](LICENSE). Tüm kod, veri ve
+  bileşenler açık kaynaktır; ücretli/kapalı bir bağımlılık yoktur.
+- **Veri seti (herkese açık):** [`dataset/`](dataset/) — 10 BDDK katılım bankasının
+  ham metinleri + grounding'li yapılandırılmış çıkarımı (JSON). Kaynak:
+  [BDDK Liste/77](https://www.bddk.org.tr/Kurulus/Liste/77).
+- **Çalıştırma bağımlılıkları:** [`requirements.txt`](requirements.txt) · adım adım
+  kurulum aşağıda ("Çalıştırma").
+- **GitHub etiketi:** Repo `BilisimVadisi2026` topic'i ile işaretlenmelidir
+  (GitHub → repo → ⚙ About → Topics → `BilisimVadisi2026`).
+
 ---
 
 ## Neden birinci? — 4 ayırt edici özellik
