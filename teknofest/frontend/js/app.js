@@ -102,7 +102,11 @@ async function renderSkor() {
 const ALAN_ETIKET = {
   kar_payi_orani: "Kâr payı oranı (brüt %)", kar_payi_orani_net: "Net kâr payı (%)",
   paylasim_orani: "Kâr paylaşım oranı", vade_gun: "Vade (gün)", para_birimi: "Para birimi",
-  min_tutar: "Asgari tutar", max_tutar: "Azami tutar", kampanya_bitis: "Kampanya bitişi",
+  min_tutar: "Asgari tutar", max_tutar: "Azami tutar",
+  finansman_tutari: "Finansman tutarı", taksit_sayisi: "Taksit sayısı",
+  tahsis_ucreti: "Tahsis ücreti", odul_miktari: "Ödül miktarı",
+  indirim_orani: "İndirim oranı (%)", alisveris_puani: "Alışveriş puanı",
+  kampanya_bitis: "Kampanya bitişi",
 };
 async function openDetay(banka, urun) {
   const p = await api(`/urun/detay?banka=${encodeURIComponent(banka)}&urun_adi=${encodeURIComponent(urun)}`);
@@ -120,10 +124,19 @@ async function openDetay(banka, urun) {
   }).join("");
   const av = (p.avantajlar || []).map((a) => `<span class="tag">${a}</span>`).join(" ");
   const ks = (p.kosullar || []).map((a) => `<span class="tag">${a}</span>`).join(" ");
+  const hk = (p.hedef_kitle || []).map((a) => `<span class="tag">${a}</span>`).join(" ");
+  // Sınıflandırma alanları (grounding'siz skaler/liste)
+  const meta = [];
+  if (p.kampanya_turu && p.kampanya_turu !== "—") meta.push(["Kampanya türü", p.kampanya_turu]);
+  if (p.masrafsiz) meta.push(["Masrafsız", "✓ Evet"]);
+  const metaHtml = meta.map(([k, v]) =>
+    `<div class="alan"><div class="alan-ust"><span class="alan-ad">${k}</span><span class="alan-deg">${v}</span></div></div>`).join("");
   $("#detay-kaynak").innerHTML = `
     <div class="kaynak-banner">📄 Kaynak: <a href="${p.kaynak_url}" target="_blank">${p.kaynak_url || "—"}</a>
       <span class="mini">çekildi: ${p.cekildigi_tarih || "—"}</span></div>
     ${rows}
+    ${metaHtml}
+    ${hk ? `<div class="alan"><div class="alan-ad">Hedef kitle</div>${hk}</div>` : ""}
     ${av ? `<div class="alan"><div class="alan-ad">Avantajlar</div>${av}</div>` : ""}
     ${ks ? `<div class="alan"><div class="alan-ad">Koşullar</div>${ks}</div>` : ""}`;
   $("#detay-json").textContent = JSON.stringify(p, null, 2);

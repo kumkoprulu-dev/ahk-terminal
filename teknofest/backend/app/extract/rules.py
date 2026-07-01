@@ -255,9 +255,107 @@ def extract_kosullar(text: str) -> list[str]:
     return out
 
 
+# --- Şartname 5.3 ek alanlar -----------------------------------------------
+def extract_taksit(text: str) -> Grounded[int]:
+    """Taksit sayısı: 'X taksit' ya da finansmanda 'X ay' (=X taksit)."""
+    m = re.search(r"(\d{1,3})\s*taksit", text, re.IGNORECASE)
+    if m:
+        return Grounded(value=int(m.group(1)), source_quote=_find_sentence(text, m.start()), confidence=0.9)
+    if re.search(r"finansman|kredi|konut|taşıt|tasit", text, re.IGNORECASE):
+        m = re.search(r"(\d{1,3})\s*ay", text, re.IGNORECASE)
+        if m:
+            return Grounded(value=int(m.group(1)), source_quote=_find_sentence(text, m.start()), confidence=0.7)
+    return Grounded()
+
+
+def detect_masrafsiz(text: str) -> tuple[bool, Grounded[str]]:
+    """Masrafsız mı + tahsis ücreti durumu."""
+    low = text.lower()
+    masrafsiz_pat = r"(masrafsız|masraf alınmaz|dosya masrafı (yok|alınmaz|alınmamakta)|" \
+                    r"tahsis ücreti (yok|alınmaz|alınmamakta)|ücret alınmaz|işletim ücreti alınmaz|" \
+                    r"masrafı bulunmamakta|ekspertiz (ücreti )?(banka|ücretsiz))"
+    m = re.search(masrafsiz_pat, low)
+    if m:
+        return True, Grounded(value="alınmaz", source_quote=_find_sentence(text, m.start()), confidence=0.85)
+    # Tahsis ücreti tutarı verilmişse
+    m2 = re.search(r"tahsis ücreti[^.]{0,30}?(\d{1,3}(?:\.\d{3})*(?:,\d+)?)\s*(TL|₺)", text, re.IGNORECASE)
+    if m2:
+        return False, Grounded(value=m2.group(1) + " TL",
+                               source_quote=_find_sentence(text, m2.start()), confidence=0.8)
+    return False, Grounded()
+
+
+def extract_odul(text: str) -> Grounded[str]:
+    """Ödül miktarı: 'X TL alışveriş çeki/hediye/ödül/iade'."""
+    m = re.search(r"(\d{1,3}(?:\.\d{3})*(?:,\d+)?)\s*(TL|₺)[^.]{0,25}?"
+                  r"(çek|hediye|ödül|iade|puan|para)", text, re.IGNORECASE)
+    if m:
+        return Grounded(value=f"{m.group(1)} TL {m.group(3)}",
+                        source_quote=_find_sentence(text, m.start()), confidence=0.8)
+    return Grounded()
+
+
+def extract_indirim(text: str) -> Grounded[float]:
+    for m in re.finditer(r"%\s?(\d{1,3}(?:[.,]\d{1,2})?)", text):
+        ctx = text[max(0, m.start() - 30): m.end() + 25].lower()
+        if "indirim" in ctx:
+            try:
+                return Grounded(value=_tr_number(m.group(1)),
+                                source_quote=_find_sentence(text, m.start()), confidence=0.85)
+            except ValueError:
+                continue
+    return Grounded()
+
+
+def extract_alisveris_puani(text: str) -> Grounded[str]:
+    m = re.search(r"(\d{1,3}(?:\.\d{3})*(?:,\d+)?)\s*(TL|₺|puan)[^.]{0,20}?"
+                  r"(alışveriş puanı|puan|worldpuan|bonus|paracık)", text, re.IGNORECASE)
+    if m:
+        return Grounded(value=f"{m.group(1)} {m.group(3)}",
+                        source_quote=_find_sentence(text, m.start()), confidence=0.75)
+    return Grounded()
+
+
+def detect_kampanya_turu(text: str, urun_adi: str = "") -> "KampanyaTuru":
+    from .schema import KampanyaTuru
+    low = (urun_adi + " " + text).lower()
+    if "konut" in low or "ev sahibi" in low or "mortgage" in low:
+        return KampanyaTuru.konut
+    if "taşıt" in low or "tasit" in low or "araç" in low or "arac " in low or "otomobil" in low:
+        return KampanyaTuru.tasit
+    if "ihtiyaç" in low or "ihtiyac" in low:
+        return KampanyaTuru.ihtiyac
+    if "alışveriş puanı" in low or "alisveris puani" in low or "worldpuan" in low:
+        return KampanyaTuru.alisveris_puani
+    if "kart" in low or "harcama" in low:
+        return KampanyaTuru.kart
+    if "yatırım" in low or "yatirim" in low or "fon" in low:
+        return KampanyaTuru.yatirim
+    if re.search(r"yeni (müşteri|gelen|gel)", low) or "müşterisi olmayan" in low:
+        return KampanyaTuru.yeni_musteri
+    if "finansman" in low:
+        return KampanyaTuru.finansman
+    return KampanyaTuru.yok
+
+
+def detect_hedef_kitle(text: str) -> list[str]:
+    low = text.lower()
+    out = []
+    if re.search(r"yeni (müşteri|gelen|gel)|müşterisi olmayan|ilk defa|son \d+ ay", low):
+        out.append("Yeni müşteri")
+    if "mevcut müşter" in low or "mevcut müşteri" in low:
+        out.append("Mevcut müşteri")
+    if "maaş müşter" in low or "maaşını" in low or "maaş" in low:
+        out.append("Maaş müşterisi")
+    if "emekli" in low:
+        out.append("Emekli")
+    return out
+
+
 def rule_extract(banka: str, urun_adi: str, text: str, url: str | None = None) -> KatilimUrunu:
     """Tek metinden tek ürün çıkar (kural tabanlı)."""
     kamp_bitis = extract_tarih(text, "bitis")
+    masrafsiz, tahsis = detect_masrafsiz(text)
     return KatilimUrunu(
         banka=banka,
         urun_adi=urun_adi,
@@ -268,6 +366,14 @@ def rule_extract(banka: str, urun_adi: str, text: str, url: str | None = None) -
         para_birimi=extract_para_birimi(text),
         min_tutar=extract_min_tutar(text),
         max_tutar=extract_max_tutar(text),
+        taksit_sayisi=extract_taksit(text),
+        tahsis_ucreti=tahsis,
+        masrafsiz=masrafsiz,
+        kampanya_turu=detect_kampanya_turu(text, urun_adi),
+        odul_miktari=extract_odul(text),
+        indirim_orani=extract_indirim(text),
+        alisveris_puani=extract_alisveris_puani(text),
+        hedef_kitle=detect_hedef_kitle(text),
         avantajlar=extract_avantajlar(text),
         kosullar=extract_kosullar(text),
         kampanya=bool(re.search(r"kampanya", text, re.IGNORECASE)),

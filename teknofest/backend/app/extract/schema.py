@@ -25,6 +25,19 @@ class UrunTipi(str, Enum):
     diger = "diger"
 
 
+class KampanyaTuru(str, Enum):
+    """Şartname 5.4 — kampanya sınıflandırma kategorileri."""
+    finansman = "Finansman Kampanyası"
+    ihtiyac = "İhtiyaç Finansmanı Kampanyası"
+    konut = "Konut Finansmanı Kampanyası"
+    tasit = "Taşıt Finansmanı Kampanyası"
+    kart = "Kart Kampanyası"
+    alisveris_puani = "Alışveriş Puanı Kampanyası"
+    yeni_musteri = "Yeni Müşteri Kampanyası"
+    yatirim = "Yatırım Ürünü Kampanyası"
+    yok = "—"
+
+
 class Grounded(BaseModel, Generic[T]):
     """Bir alanın değeri + kaynak kanıtı."""
     value: T | None = None
@@ -55,6 +68,21 @@ class KatilimUrunu(BaseModel):
     para_birimi: Grounded[str] = Field(default_factory=Grounded)        # TRY/USD/EUR/XAU
     min_tutar: Grounded[float] = Field(default_factory=Grounded)
     max_tutar: Grounded[float] = Field(default_factory=Grounded)
+
+    # Finansman alanları (şartname 5.3)
+    finansman_tutari: Grounded[float] = Field(default_factory=Grounded)
+    taksit_sayisi: Grounded[int] = Field(default_factory=Grounded)
+    tahsis_ucreti: Grounded[str] = Field(default_factory=Grounded)   # tutar ya da "alınmaz"
+    masrafsiz: bool = False                                          # masraf/dosya ücreti yok mu
+
+    # Kampanya alanları (şartname 5.3)
+    kampanya_turu: KampanyaTuru = KampanyaTuru.yok
+    odul_miktari: Grounded[str] = Field(default_factory=Grounded)     # "5.000 TL çek" vb.
+    indirim_orani: Grounded[float] = Field(default_factory=Grounded)  # %
+    alisveris_puani: Grounded[str] = Field(default_factory=Grounded)
+
+    # Hedef kitle (şartname 5.3): yeni_musteri, mevcut_musteri, maas_musterisi, segment
+    hedef_kitle: list[str] = Field(default_factory=list)
 
     avantajlar: list[str] = Field(default_factory=list)
     kosullar: list[str] = Field(default_factory=list)
@@ -95,6 +123,15 @@ class KatilimUrunu(BaseModel):
             "para_birimi": self.para_birimi.value,
             "min_tutar": self.min_tutar.value,
             "max_tutar": self.max_tutar.value,
+            "finansman_tutari": self.finansman_tutari.value,
+            "taksit_sayisi": self.taksit_sayisi.value,
+            "tahsis_ucreti": self.tahsis_ucreti.value,
+            "masrafsiz": self.masrafsiz,
+            "kampanya_turu": self.kampanya_turu.value,
+            "odul_miktari": self.odul_miktari.value,
+            "indirim_orani": self.indirim_orani.value,
+            "alisveris_puani": self.alisveris_puani.value,
+            "hedef_kitle": self.hedef_kitle,
             "avantajlar": self.avantajlar,
             "kosullar": self.kosullar,
             "kampanya": self.kampanya,
