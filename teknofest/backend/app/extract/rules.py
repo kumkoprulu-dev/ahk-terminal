@@ -56,6 +56,10 @@ _RATE_POS = ("kâr payı", "kar payı", "kar payi", "paylaşım oran", "paylasim
 # Oranı YANLIŞ kılan bağlamlar (kâr payı değil): devlet katkısı, indirim, yaş...
 _RATE_NEG = ("devlet katkı", "indirim", "iade", "kdv", "yaş", "yas ", "komisyon",
             "masraf", "ek puan", "ilave", "varan döviz", "döviz hediye", "%95-5", "95-5")
+# Kredi/finansman oranı DEĞİL — teminat/LTV/peşinat bağlamı (aynı cümlede olursa reddet).
+# "değerinin %X'ine kadar" gibi kredi-değer oranı (LTV) kalıpları.
+_LTV_NEG = ("değerin", "peşinat", "kredi tutar", "teminat", "ekspertiz değer",
+            "kredinin %", "anaparanın")
 
 
 def extract_kar_payi(text: str) -> Grounded[float]:
@@ -72,12 +76,15 @@ def extract_kar_payi(text: str) -> Grounded[float]:
             continue
         if val <= 0 or val > 200:
             continue
-        ctx = text[max(0, m.start() - 60) : m.end() + 30].lower()
-        if "net" in ctx or "stopaj sonrası" in ctx or "stopaj sonrasi" in ctx:
+        # POS ipucu AYNI CÜMLEDE aranır (komşu cümleden "kâr payı" sızmasın —
+        # ör. "konut değerinin %75'ine kadar" LTV'si kâr payı sayılmasın).
+        sent = _find_sentence(text, m.start()).lower()
+        ctx = text[max(0, m.start() - 60) : m.end() + 30].lower()  # NEG için geniş
+        if "net" in sent or "stopaj sonrası" in sent or "stopaj sonrasi" in sent:
             continue  # net oran ayrı alanda
-        if any(n in ctx for n in _RATE_NEG):
+        if any(n in ctx for n in _RATE_NEG) or any(n in sent for n in _LTV_NEG):
             continue
-        score = sum(2 for p in _RATE_POS if p in ctx)
+        score = sum(2 for p in _RATE_POS if p in sent)
         # makul kâr payı aralığına hafif bonus (ör. %20–%60 TL hesapları)
         if 5 <= val <= 70:
             score += 1

@@ -19,6 +19,7 @@ class BankSource:
     sample_text: str
 
 
+# BDDK Liste/77 — Türkiye'deki TÜM katılım bankaları (şartname 5.1). 3'ü dijital.
 KATILIM_BANKALARI = [
     "Kuveyt Türk",
     "Albaraka Türk",
@@ -26,6 +27,10 @@ KATILIM_BANKALARI = [
     "Ziraat Katılım",
     "Vakıf Katılım",
     "Emlak Katılım",
+    "Hayat Finans",       # dijital
+    "TOM Katılım",        # dijital
+    "Dünya Katılım",
+    "Adil Katılım",       # dijital
 ]
 
 
@@ -89,6 +94,42 @@ SAMPLE_SOURCES: list[BankSource] = [
             "Günlük Altın Hesabı ile her gün kâr payı kazanın. Vade 7 gün, yıllık brüt kâr payı oranı "
             "altında %2,10'dur. 0,1 gram altından başlayan tutarlarla hesap açılabilir. Hesap "
             "tamamen dijital açılır, şubeye gitmenize gerek yoktur. İstediğiniz an bozdurabilirsiniz."
+        ),
+    ),
+    BankSource(
+        banka="Hayat Finans",
+        url="https://www.hayatfinans.com.tr/ornek/e-katilma",
+        sample_text=(
+            "e-Katılma Hesabı tamamen dijital açılır. 32 gün vadeli TL katılma hesabında yeni "
+            "müşterilere özel brüt yıllık kâr payı oranı %49'dur. Minimum 100 TL ile hesap açabilirsiniz. "
+            "Uygulamadan açılışta hiçbir masraf alınmaz. Kampanya 30 Eylül 2026 tarihine kadar geçerlidir."
+        ),
+    ),
+    BankSource(
+        banka="TOM Katılım",
+        url="https://www.tombank.com.tr/ornek/tom-katilma",
+        sample_text=(
+            "TOM Katılma Hesabı ile dijitalden kâr payı kazanın. 45 gün vade için brüt yıllık kâr payı "
+            "oranı %47,5 olarak uygulanır. Asgari tutar 1.000 TL'dir. Tahsis ücreti ya da işletim masrafı "
+            "alınmaz. Sadece uygulama üzerinden yeni gelen birikimlere sunulur."
+        ),
+    ),
+    BankSource(
+        banka="Dünya Katılım",
+        url="https://www.dunyakatilim.com.tr/ornek/konut-finansmani",
+        sample_text=(
+            "Konut Finansmanı (faizsiz) kampanyası ile ev sahibi olun. 120 ay vadeye kadar finansman; "
+            "aylık kâr payı oranı %2,79'dan başlar. Konut değerinin %75'ine kadar finansman kullandırılır. "
+            "Dosya masrafı ve ekspertiz ücreti alınmaz. Maaş müşterilerine özel indirimli oran uygulanır."
+        ),
+    ),
+    BankSource(
+        banka="Adil Katılım",
+        url="https://www.adilbank.com.tr/ornek/altin-katilma",
+        sample_text=(
+            "Adil Altın Katılma Hesabı ile gram altın biriktirin. 90 gün vadeli altın hesabında yıllık "
+            "brüt kâr payı oranı %3,10'dur. Minimum 1 gram altın ile açılır. Fiziki altın teslimi "
+            "yapılabilir. Hesap tamamen dijital, işletim ücreti alınmaz."
         ),
     ),
 ]

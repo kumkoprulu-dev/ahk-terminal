@@ -61,6 +61,42 @@ GOLD = {
         "min_tutar": 0.1,
         "kampanya_bitis": None,
     },
+    "Hayat Finans": {
+        "urun_tipi": "katilma_hesabi",
+        "kar_payi_orani": 49.0,
+        "kar_payi_orani_net": None,
+        "vade_gun": 32,
+        "para_birimi": "TRY",
+        "min_tutar": 100.0,
+        "kampanya_bitis": "2026-09-30",
+    },
+    "TOM Katılım": {
+        "urun_tipi": "katilma_hesabi",
+        "kar_payi_orani": 47.5,
+        "kar_payi_orani_net": None,
+        "vade_gun": 45,
+        "para_birimi": "TRY",
+        "min_tutar": 1000.0,
+        "kampanya_bitis": None,
+    },
+    "Dünya Katılım": {
+        "urun_tipi": "finansman",
+        "kar_payi_orani": 2.79,
+        "kar_payi_orani_net": None,
+        "vade_gun": 3600,
+        "para_birimi": None,
+        "min_tutar": None,
+        "kampanya_bitis": None,
+    },
+    "Adil Katılım": {
+        "urun_tipi": "altin_hesabi",
+        "kar_payi_orani": 3.10,
+        "kar_payi_orani_net": None,
+        "vade_gun": 90,
+        "para_birimi": "XAU",
+        "min_tutar": 1.0,
+        "kampanya_bitis": None,
+    },
 }
 
 ALANLAR = [

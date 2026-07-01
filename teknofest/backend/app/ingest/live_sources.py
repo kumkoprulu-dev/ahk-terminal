@@ -55,6 +55,19 @@ LIVE_SOURCES: list[LiveSource] = [
     LiveSource("Emlak Katılım", "Katılma Hesapları",
                "https://www.emlakkatilim.com.tr/tr/bireysel/hesaplar/katilma-hesaplari",
                para_birimi_ipucu="TRY", render_required=True),
+    # --- Dijital/yeni bankalar (SPA → headless render; olmazsa örnek-fallback) ---
+    LiveSource("Hayat Finans", "e-Katılma Hesabı",
+               "https://www.hayatfinans.com.tr/bireysel/katilma-hesaplari",
+               para_birimi_ipucu="TRY", render_required=True),
+    LiveSource("TOM Katılım", "Katılma Hesabı",
+               "https://www.tombank.com.tr/bireysel/mevduat",
+               para_birimi_ipucu="TRY", render_required=True),
+    LiveSource("Dünya Katılım", "Konut Finansmanı",
+               "https://www.dunyakatilim.com.tr/bireysel/finansman",
+               para_birimi_ipucu="TRY", render_required=True),
+    LiveSource("Adil Katılım", "Altın Katılma Hesabı",
+               "https://www.adilbank.com.tr/bireysel/hesaplar",
+               para_birimi_ipucu="TRY", render_required=True),
 ]
 
 
