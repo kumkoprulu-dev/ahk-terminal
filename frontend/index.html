@@ -455,11 +455,21 @@
       <div class="panel" style="padding:12px;margin-top:12px">
         <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
           <strong>🧩 NNFX Yuva Arama</strong>
+          <select id="nx-universe" title="evren">
+            <option value="karisik" selected>Karışık (BIST+kripto)</option>
+            <option value="kripto">Kripto (15 major)</option>
+            <option value="bist30">BIST 30</option>
+            <option value="bist50">BIST 50</option>
+            <option value="bist100">BIST 100</option>
+            <option value="nasdaq">NASDAQ</option>
+            <option value="emtia">Emtia</option>
+          </select>
           <select id="nx-interval" title="zaman dilimi">
             <option value="1d" selected>Günlük (1d)</option>
             <option value="4h">4 saat</option>
             <option value="1h">1 saat</option>
           </select>
+          <label class="muted" style="font-size:12px">sepet <input id="nx-basket" type="number" value="12" min="4" max="30" style="width:52px" /></label>
           <label class="muted" style="font-size:12px"><input id="nx-c2" type="checkbox" /> 2. confirmation (4 yuva, ağır)</label>
           <label class="muted" style="font-size:12px">ilk <input id="nx-top" type="number" value="30" min="5" max="60" style="width:52px" /></label>
           <button class="primary" id="nx-run">NNFX Ara</button>
@@ -561,7 +571,7 @@
   <script src="/static/js/alarms.js?v=16"></script>
   <script src="/static/js/results.js?v=17"></script>
   <script src="/static/js/edgelab.js?v=1"></script>
-  <script src="/static/js/nnfx.js?v=1"></script>
+  <script src="/static/js/nnfx.js?v=2"></script>
   <script src="/static/js/canlive.js?v=1"></script>
   <script src="/static/js/app.js?v=18"></script>
 </body>

@@ -9,6 +9,7 @@ from __future__ import annotations
 
 from app.backtest import combo_search as cs
 from app.data import service
+from app.data.universe import get_universe
 from app.storage.results_store import Recorder
 
 try:
@@ -16,8 +17,14 @@ try:
 except Exception:  # pragma: no cover — kripto sağlayıcı opsiyonel
     okx_provider = None
 
+# Karışık (BIST+kripto) varsayılan sepet — orijinal NNFX davranışı
 DEFAULT_BIST = ["EREGL.IS", "KCHOL.IS", "SASA.IS", "TUPRS.IS", "SISE.IS", "FROTO.IS"]
-DEFAULT_CRYPTO = ["BTC-USDT-SWAP", "ETH-USDT-SWAP", "SOL-USDT-SWAP", "BNB-USDT-SWAP"]
+DEFAULT_CRYPTO = ["BTC", "ETH", "SOL", "BNB"]
+# Kripto evreni (Combo1/xsec'in doğrulandığı likit major, OKX perp)
+CRYPTO_MAJOR = ["BTC", "ETH", "SOL", "XRP", "DOGE", "ADA", "AVAX", "LINK", "DOT",
+                "LTC", "BCH", "ATOM", "NEAR", "TRX", "BNB"]
+# UI'ın sunacağı evren seçenekleri (Edge Lab ile aynı + karışık)
+UNIVERSES = ["karisik", "kripto", "bist30", "bist50", "bist100", "nasdaq", "emtia"]
 WARMUP = 120
 
 
@@ -27,6 +34,7 @@ def slot_template() -> dict:
     entry, exit_ = cs.combo_rules(example)
     return {
         "slots": cs.NNFX_SLOTS,
+        "universes": UNIVERSES,
         "noise": {k: (v or "—") for k, v in cs.NNFX_NOISE.items()},
         "n_combos_3slot": sum(1 for _ in cs.iter_nnfx(use_confirm2=False)) * len(cs.NNFX_NOISE),
         "n_combos_4slot": sum(1 for _ in cs.iter_nnfx(use_confirm2=True)) * len(cs.NNFX_NOISE),
@@ -37,25 +45,48 @@ def slot_template() -> dict:
     }
 
 
-def load_basket(interval: str = "1d", bist: list[str] | None = None,
-                crypto: list[str] | None = None) -> dict:
-    """BIST (Yahoo) + kripto (OKX) OHLCV sepetini yükler (nnfx_search ile aynı)."""
-    bist = bist or DEFAULT_BIST
-    crypto = crypto or DEFAULT_CRYPTO
-    bist_range = "5y" if interval in ("1d", "1wk") else "2y"
-    crypto_bars = 1000 if interval == "1d" else 3000
-    raw: dict = {}
-    for s in bist:
+def _load_crypto(bases: list[str], interval: str) -> dict:
+    if okx_provider is None:
+        return {}
+    bars = 1000 if interval == "1d" else 3000
+    out: dict = {}
+    for b in bases:
         try:
-            raw[s] = service.get_ohlcv(s, interval, bist_range)
+            df = okx_provider.get_ohlcv(f"{b}-USDT-SWAP", interval, bars=bars)
+            if df is not None:
+                out[b] = df
         except Exception:
             pass
-    if okx_provider is not None:
-        for s in crypto:
-            try:
-                raw[s.replace("-USDT-SWAP", "")] = okx_provider.get_ohlcv(s, interval, bars=crypto_bars)
-            except Exception:
-                pass
+    return out
+
+
+def _load_stock(symbols: list[str], interval: str) -> dict:
+    rng = "5y" if interval in ("1d", "1wk") else "2y"
+    out: dict = {}
+    for s in symbols:
+        try:
+            df = service.get_ohlcv(s, interval, rng)
+            if df is not None:
+                out[s] = df[~df.index.duplicated(keep="last")].sort_index()
+        except Exception:
+            pass
+    return out
+
+
+def load_basket(interval: str = "1d", universe: str = "karisik", basket_size: int = 12) -> dict:
+    """Seçilen evrenin OHLCV sepetini yükler. universe: karisik|kripto|bist30/50/100|nasdaq|emtia.
+    basket_size: sepet üst sınırı (evrenin doğal sırasından ilk N — arama süresini kontrol eder;
+    her kombo tüm sembollerde koşar, 100 sembol × 1536 kombo çok ağır olur)."""
+    n = max(2, int(basket_size))
+    if universe == "karisik":
+        half = max(1, n // 2)
+        raw = {**_load_stock(DEFAULT_BIST[:half], interval),
+               **_load_crypto(DEFAULT_CRYPTO[:n - half], interval)}
+    elif universe == "kripto":
+        raw = _load_crypto(CRYPTO_MAJOR[:n], interval)
+    else:
+        syms = [s.symbol for s in get_universe(universe)][:n]
+        raw = _load_stock(syms, interval)
     return {k: v for k, v in raw.items() if v is not None and len(v) > 2 * WARMUP + 80}
 
 
@@ -69,12 +100,13 @@ def _split(raw: dict, frac: float = 0.6):
 
 
 def run_search(interval: str = "1d", use_confirm2: bool = False, top: int = 30,
+               universe: str = "karisik", basket_size: int = 12,
                persist: bool = True) -> dict:
     """NNFX yuva araması: sepeti yükle → IS/OOS böl → OOS'ta skorla + IS'te ölç (overfit farkı).
     OOS Sharpe'a göre sıralı ilk `top` sonucu döner; persist ise results.sqlite'a yazar."""
-    raw = load_basket(interval)
+    raw = load_basket(interval, universe=universe, basket_size=basket_size)
     if not raw:
-        return {"ok": False, "error": "Sepet boş — veri yüklenemedi.", "results": []}
+        return {"ok": False, "error": f"Sepet boş — '{universe}' evreninden veri yüklenemedi.", "results": []}
     is_b, oos_b = _split(raw)
     slots = "baseline×confirm×volume" + ("×confirm2" if use_confirm2 else "")
 
@@ -100,8 +132,9 @@ def run_search(interval: str = "1d", use_confirm2: bool = False, top: int = 30,
     run_id = None
     if persist:
         rec = Recorder("nnfx_service", "combo_nnfx",
-                       label=f"NNFX yuva araması ({interval}, sepet {len(raw)}, {slots})",
-                       params={"interval": interval, "slots": slots, "basket": sorted(raw)})
+                       label=f"NNFX yuva araması ({universe}, {interval}, sepet {len(raw)}, {slots})",
+                       params={"interval": interval, "universe": universe, "slots": slots,
+                               "basket": sorted(raw)})
         for r in rows:
             rec.add({k: v for k, v in r.items() if k != "rank"},
                     interval=interval, name=f"{r['name']} · {r['noise']}", rank=r["rank"])
@@ -114,6 +147,6 @@ def run_search(interval: str = "1d", use_confirm2: bool = False, top: int = 30,
         if vals:
             noise_avg[nlabel] = round(sum(vals) / len(vals), 3)
 
-    return {"ok": True, "run_id": run_id, "interval": interval, "slots": slots,
+    return {"ok": True, "run_id": run_id, "interval": interval, "universe": universe, "slots": slots,
             "symbols": sorted(raw), "n_combos": len(oos), "noise_avg": noise_avg,
             "results": rows[:top]}

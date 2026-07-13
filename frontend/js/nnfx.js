@@ -15,6 +15,8 @@
   async function run() {
     stopPolling();
     const interval = document.getElementById("nx-interval").value;
+    const universe = document.getElementById("nx-universe").value;
+    const basket_size = parseInt(document.getElementById("nx-basket").value) || 12;
     const use_confirm2 = document.getElementById("nx-c2").checked;
     const top = parseInt(document.getElementById("nx-top").value) || 30;
     const meta = document.getElementById("nx-meta");
@@ -24,7 +26,7 @@
       `<div class="spinner">⏳ NNFX kombolar üretiliyor + OOS test ediliyor…</div>`;
     btn.disabled = true;
     try {
-      const { job_id } = await API.post("/api/nnfx/search", { interval, use_confirm2, top });
+      const { job_id } = await API.post("/api/nnfx/search", { interval, universe, basket_size, use_confirm2, top });
       const started = Date.now();
       polling = setInterval(async () => {
         try {
@@ -57,7 +59,7 @@
       meta.innerHTML = `<span class="neg">${(r && r.error) || "Sonuç yok."}</span>`;
       return;
     }
-    meta.innerHTML = `<b>${r.n_combos}</b> strateji · sepet ${r.symbols.length} · ${r.slots} · OOS-sıralı · run #${r.run_id}`;
+    meta.innerHTML = `<b>${r.n_combos}</b> strateji · <b>${r.universe || "?"}</b> · sepet ${r.symbols.length} (${(r.symbols || []).slice(0, 8).join(", ")}${r.symbols.length > 8 ? "…" : ""}) · ${r.slots} · OOS-sıralı · run #${r.run_id}`;
 
     // Noise kapısı ortalama katkısı (NNFX'in en öğretici bulgusu)
     const na = r.noise_avg || {};

@@ -46,11 +46,14 @@ class SearchRequest(BaseModel):
     interval: str = "1d"
     use_confirm2: bool = False   # 4. yuva (2. confirmation) — daha ağır (7680 kombo)
     top: int = 30
+    universe: str = "karisik"    # karisik|kripto|bist30|bist50|bist100|nasdaq|emtia
+    basket_size: int = 12        # sepet üst sınırı (her kombo tüm sembollerde koşar)
 
 
 def _run_job(job_id: str, req: SearchRequest) -> None:
     try:
-        out = nnfx.run_search(interval=req.interval, use_confirm2=req.use_confirm2, top=req.top)
+        out = nnfx.run_search(interval=req.interval, use_confirm2=req.use_confirm2, top=req.top,
+                              universe=req.universe, basket_size=req.basket_size)
         with _LOCK:
             _JOBS[job_id].update(status="done" if out.get("ok") else "error",
                                  finished=time.time(), result=out,
@@ -65,6 +68,8 @@ def start_search(req: SearchRequest):
     """NNFX aramasını arka-plan thread'inde başlatır, job_id döner (GET /search/{id} ile poll)."""
     if req.interval not in ("1d", "4h", "1h", "1wk"):
         raise HTTPException(400, "Geçersiz interval (1d/4h/1h/1wk).")
+    if req.universe not in nnfx.UNIVERSES:
+        raise HTTPException(400, f"Geçersiz evren. Seçenekler: {', '.join(nnfx.UNIVERSES)}.")
     job_id = uuid.uuid4().hex[:12]
     with _LOCK:
         # eski bitmiş job'ları buda

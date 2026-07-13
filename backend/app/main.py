@@ -49,9 +49,10 @@ init_db()
 
 @app.middleware("http")
 async def no_cache_static(request, call_next):
-    """Statik dosyalarda no-cache — düzenlemeden sonra tarayıcı bayat JS sunmasın."""
+    """Statik dosyalarda + ana sayfada no-cache — düzenlemeden sonra tarayıcı bayat
+    HTML/JS sunmasın (index.html '/' yolundan gelir, /static'e girmez → ayrıca kapsanır)."""
     response = await call_next(request)
-    if request.url.path.startswith("/static"):
+    if request.url.path.startswith("/static") or request.url.path == "/":
         response.headers["Cache-Control"] = "no-cache, no-store, must-revalidate"
     return response
 
