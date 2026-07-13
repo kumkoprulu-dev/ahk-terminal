@@ -93,3 +93,13 @@ def fractal_ind(df, length=30):
 
     out = pd.Series(s, index=df.index).rolling(n).apply(_katz, raw=True)
     return out.to_frame("FractalDim")
+
+
+@indicator("EfficiencyRatio", "Kuantitatif", [_SRC, Param("length", 10, 2, 300)], ["ER"],
+           description="Kaufman Efficiency Ratio (0-1): net yol / toplam yol. Yüksek=trend, düşük=choppy")
+def er_ind(df, source="close", length=10):
+    n = int(length)
+    s = src(df, source)
+    change = (s - s.shift(n)).abs()
+    vol = s.diff().abs().rolling(n).sum().replace(0, np.nan)
+    return (change / vol).to_frame("ER")

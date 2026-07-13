@@ -15,9 +15,10 @@ def fusion_symbol(symbol: str):
 
 
 class WeightSpec(BaseModel):
-    technical: float = 0.40
-    sentiment: float = 0.25
-    fundamental: float = 0.35
+    technical: float = 0.32
+    sentiment: float = 0.20
+    fundamental: float = 0.28
+    edge: float = 0.20
 
 
 class GroupRequest(BaseModel):

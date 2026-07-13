@@ -11,7 +11,7 @@ from app.api import (
     routes_data, routes_indicators, routes_scanner,
     routes_backtest, routes_optimize, routes_walkforward, routes_portfolio,
     routes_sentiment, routes_market, routes_fundamentals, routes_fusion, routes_auth,
-    routes_live, routes_formula, routes_alarms,
+    routes_live, routes_formula, routes_alarms, routes_results, routes_nnfx,
 )
 from app.accounts.service import init_db
 # indicators paketini import etmek registry kaydını tetikler
@@ -42,6 +42,8 @@ app.include_router(routes_auth.router)
 app.include_router(routes_live.router)
 app.include_router(routes_formula.router)
 app.include_router(routes_alarms.router)
+app.include_router(routes_results.router)
+app.include_router(routes_nnfx.router)
 init_db()
 
 

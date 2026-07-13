@@ -42,6 +42,7 @@ def run_walk_forward(
     take_profit: float | None = None,
     direction: str = "long",
     initial_cash: float = 10_000.0,
+    df=None,
 ) -> dict:
     params = params or []
     names = [p["name"] for p in params]
@@ -54,7 +55,8 @@ def run_walk_forward(
     if train_bars < 30 or test_bars < 5:
         raise ValueError("Eğitim ≥30, test ≥5 bar olmalı.")
 
-    df = service.get_ohlcv(symbol, interval, range_)
+    if df is None:
+        df = service.get_ohlcv(symbol, interval, range_)
     if df is None or len(df) < train_bars + test_bars + 5:
         raise ValueError("Yetersiz veri: eğitim+test penceresi mevcut veriden büyük.")
 

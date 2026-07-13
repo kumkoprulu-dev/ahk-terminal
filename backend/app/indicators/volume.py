@@ -4,7 +4,7 @@ from __future__ import annotations
 import numpy as np
 import pandas as pd
 
-from app.indicators._helpers import sma
+from app.indicators._helpers import ema, sma
 from app.indicators.registry import Param, indicator
 
 
@@ -56,3 +56,38 @@ def volosc_ind(df, fast=5, slow=20):
     f = sma(df["volume"], int(fast))
     s = sma(df["volume"], int(slow))
     return (100 * (f - s) / s).to_frame("VolumeOsc")
+
+
+# ============================ FAZ 0 — yeni hacim göstergeleri ============================
+
+@indicator("ForceIndex", "Hacim", [Param("length", 13, 1, 200)], ["ForceIndex"],
+           description="Elder Force Index (fiyat değişimi × hacim, EMA)")
+def forceindex_ind(df, length=13):
+    fi = df["close"].diff() * df["volume"]
+    return ema(fi, int(length)).to_frame("ForceIndex")
+
+
+@indicator("EaseOfMovement", "Hacim", [Param("length", 14, 1, 200)], ["EOM"],
+           description="Ease of Movement (fiyat hareketi / hacim direnci)")
+def eom_ind(df, length=14):
+    hl2 = (df["high"] + df["low"]) / 2
+    distance = hl2.diff()
+    box = (df["volume"] / 1e8) / (df["high"] - df["low"]).replace(0, np.nan)
+    emv = distance / box.replace(0, np.nan)
+    return sma(emv, int(length)).to_frame("EOM")
+
+
+@indicator("KlingerOsc", "Hacim",
+           [Param("fast", 34, 1, 200), Param("slow", 55, 2, 300), Param("signal", 13, 1, 100)],
+           ["KVO", "Signal"], description="Klinger Volume Oscillator")
+def klinger_ind(df, fast=34, slow=55, signal=13):
+    hlc = df["high"] + df["low"] + df["close"]
+    trend = np.sign(hlc.diff().fillna(0.0))
+    vf = df["volume"] * trend
+    kvo = ema(vf, int(fast)) - ema(vf, int(slow))
+    return pd.DataFrame({"KVO": kvo, "Signal": ema(kvo, int(signal))})
+
+
+@indicator("PVT", "Hacim", [], ["PVT"], description="Price Volume Trend (kümülatif)")
+def pvt_ind(df):
+    return (df["close"].pct_change().fillna(0.0) * df["volume"]).cumsum().to_frame("PVT")

@@ -14,6 +14,7 @@
         `<option value="${x.id}" ${x.id === "max_sharpe" ? "selected" : ""}>${x.label}</option>`).join("");
     } catch (e) {}
 
+    initEdge();
     document.getElementById("pf-group").addEventListener("change", loadGroup);
     document.getElementById("pf-add-btn").addEventListener("click", addSymbol);
     document.getElementById("pf-add").addEventListener("keydown", (e) => { if (e.key === "Enter") addSymbol(); });
@@ -169,6 +170,90 @@
     document.getElementById("pf-mc-hist").innerHTML =
       `<svg viewBox="0 0 ${W} ${H}" width="100%" style="display:block">${bars}</svg>
        <div class="muted" style="font-size:11px">Ufuk getiri dağılımı (10.000 senaryo) · kırmızı = VaR kuyruğu</div>`;
+  }
+
+  // ================= Edge Portföyleri =================
+  async function initEdge() {
+    try {
+      const r = await API.get("/api/portfolio/edge/modes");
+      document.getElementById("ep-mode").innerHTML = r.modes.map((m) =>
+        `<option value="${m.id}">${m.label}</option>`).join("");
+    } catch (e) {}
+    const modeSel = document.getElementById("ep-mode");
+    const uniSel = document.getElementById("ep-universe");
+    modeSel.addEventListener("change", () => {
+      // 3-kollu sabit kompozisyon (cross-asset) → evren seçimini kapat
+      uniSel.disabled = modeSel.value === "tristack";
+      uniSel.style.opacity = uniSel.disabled ? 0.4 : 1;
+    });
+    document.getElementById("ep-run").addEventListener("click", runEdge);
+  }
+
+  async function runEdge() {
+    const mode = document.getElementById("ep-mode").value;
+    const universe = document.getElementById("ep-universe").value;
+    const meta = document.getElementById("ep-meta");
+    meta.textContent = "Koşturuluyor… (veri çekiliyor, edge hesaplanıyor)";
+    ["ep-metrics", "ep-equity", "ep-arms"].forEach((id) => document.getElementById(id).innerHTML = "");
+    try {
+      const r = await API.post("/api/portfolio/edge/run", { mode, universe });
+      const info = r.info || {};
+      meta.innerHTML = `<b>${r.label}</b> · ${info.assets || "?"} varlık · ${r.metrics.bars} bar`;
+      renderEdgeMetrics(r);
+      renderEdgeEquity(r);
+      renderEdgeArms(r.arms);
+    } catch (e) {
+      meta.innerHTML = `<span class="neg">Hata: ${e.message}</span>`;
+    }
+  }
+
+  function renderEdgeMetrics(r) {
+    const m = r.metrics;
+    const cards = [
+      ["Toplam Getiri", fmt(m.total_return, 1) + "%", m.total_return >= 0 ? "pos" : "neg"],
+      ["Sharpe (TÜM)", fmt(m.sharpe, 2), m.sharpe >= 1 ? "pos" : ""],
+      ["Sharpe (OOS)", fmt(m.oos_sharpe, 2), m.oos_sharpe >= 0.5 ? "pos" : (m.oos_sharpe < 0 ? "neg" : "")],
+      ["Max DD", fmt(m.max_drawdown, 1) + "%", "neg"],
+    ];
+    if (r.benchmark_metrics) {
+      const b = r.benchmark_metrics;
+      cards.push(["Al&Tut Sharpe", fmt(b.sharpe, 2), "muted"]);
+    }
+    document.getElementById("ep-metrics").innerHTML = cards.map(([k, v, c]) =>
+      `<div class="metric"><div class="k">${k}</div><div class="v ${c}">${v}</div></div>`).join("");
+  }
+
+  function renderEdgeEquity(r) {
+    const eq = r.equity || [];
+    if (eq.length < 2) { document.getElementById("ep-equity").innerHTML = ""; return; }
+    const bh = r.benchmark || [];
+    const W = 720, H = 200, pad = 30;
+    const all = eq.concat(bh);
+    const lo = Math.min(...all.map((p) => p.v)), hi = Math.max(...all.map((p) => p.v));
+    const rng = (hi - lo) || 1;
+    const path = (arr) => arr.map((p, i) =>
+      `${(pad + i / (arr.length - 1) * (W - pad - 6)).toFixed(1)},${(H - pad - (p.v - lo) / rng * (H - pad - 6)).toFixed(1)}`).join(" ");
+    const oneY = H - pad - (1 - lo) / rng * (H - pad - 6);   // 1.0 (başlangıç sermaye) çizgisi
+    const bhLine = bh.length ? `<polyline points="${path(bh)}" fill="none" stroke="#6e7681" stroke-width="1.4" stroke-dasharray="4 3"/>` : "";
+    document.getElementById("ep-equity").innerHTML =
+      `<svg viewBox="0 0 ${W} ${H}" width="100%" style="display:block">
+        <line x1="${pad}" y1="${oneY.toFixed(1)}" x2="${W - 6}" y2="${oneY.toFixed(1)}" stroke="#30363d" stroke-dasharray="2 3"/>
+        ${bhLine}
+        <polyline points="${path(eq)}" fill="none" stroke="#2f81f7" stroke-width="2"/>
+      </svg>
+      <div class="muted" style="font-size:11px">🔵 Edge equity (1×=başlangıç) ${bh.length ? "· ⚪ eşit-ağırlık Al&Tut" : ""} · ${eq[0].t} → ${eq[eq.length - 1].t}</div>`;
+  }
+
+  function renderEdgeArms(arms) {
+    if (!arms || !arms.length) { document.getElementById("ep-arms").innerHTML = ""; return; }
+    const rows = arms.map((a) => `<tr>
+      <td>${a.name}</td>
+      <td><b>${fmt(a.weight, 1)}%</b></td>
+      ${a.sharpe >= 1 ? '<td class="pos">' : "<td>"}${fmt(a.sharpe, 2)}</td>
+      <td class="${a.oos_sharpe >= 0 ? "pos" : "neg"}">${fmt(a.oos_sharpe, 2)}</td>
+      <td class="neg">${fmt(a.max_drawdown, 1)}%</td></tr>`).join("");
+    document.getElementById("ep-arms").innerHTML = `<div class="muted" style="font-size:12px;margin-bottom:4px">Kol kırılımı (risk-paritesi ağırlıkları):</div>
+      <table><thead><tr><th>kol</th><th>ağırlık</th><th>Sharpe</th><th>OOS</th><th>DD</th></tr></thead><tbody>${rows}</tbody></table>`;
   }
 
   window.Portfolio = { init };

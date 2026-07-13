@@ -34,15 +34,15 @@
     const num = (id) => parseFloat(document.getElementById(id).value) || 0;
     const body = {
       group,
-      weights: { technical: num("fz-wt"), sentiment: num("fz-ws"), fundamental: num("fz-wf") },
+      weights: { technical: num("fz-wt"), sentiment: num("fz-ws"), fundamental: num("fz-wf"), edge: num("fz-we") },
       with_sentiment: document.getElementById("fz-sent").checked,
     };
     const meta = document.getElementById("fz-meta");
-    meta.textContent = "Füzyon hesaplanıyor… (teknik + haber + temel — biraz sürebilir)";
-    document.getElementById("fz-results").innerHTML = `<div class="spinner">⏳ 3 eksen analiz ediliyor…</div>`;
+    meta.textContent = "Füzyon hesaplanıyor… (teknik + haber + temel + edge — biraz sürebilir)";
+    document.getElementById("fz-results").innerHTML = `<div class="spinner">⏳ 4 eksen analiz ediliyor…</div>`;
     try {
       const r = await API.post("/api/fusion/group", body);
-      meta.innerHTML = `<b>${r.count}</b> sembol · ağırlık T${body.weights.technical}/H${body.weights.sentiment}/F${body.weights.fundamental}${r.with_sentiment ? "" : " · haber kapalı"}`;
+      meta.innerHTML = `<b>${r.count}</b> sembol · ağırlık T${body.weights.technical}/H${body.weights.sentiment}/F${body.weights.fundamental}/E${body.weights.edge}${r.with_sentiment ? "" : " · haber kapalı"}`;
       renderTable(r.results);
     } catch (e) {
       meta.innerHTML = `<span class="neg">Hata: ${e.message}</span>`;
@@ -61,10 +61,11 @@
         <td>${bar(r.technical)}</td>
         <td>${bar(sentScore)}</td>
         <td>${bar(r.fundamental)}</td>
+        <td>${bar(r.edge)}</td>
         <td class="flag-cell">${r.flag || ""}</td></tr>`;
     }).join("");
     document.getElementById("fz-results").innerHTML = `<table><thead><tr>
-      <th>Sembol</th><th>Sinyal</th><th>Bileşik</th><th>Teknik</th><th>Haber</th><th>Temel</th><th>Not</th>
+      <th>Sembol</th><th>Sinyal</th><th>Bileşik</th><th>Teknik</th><th>Haber</th><th>Temel</th><th title="Combo1 bull koşulları">Edge</th><th>Not</th>
       </tr></thead><tbody>${body}</tbody></table>`;
     document.querySelectorAll("#fz-results tbody tr").forEach((tr) =>
       tr.addEventListener("click", () => { document.querySelector('.tab[data-view="chart"]').click(); window.Chart.load(tr.dataset.sym); }));

@@ -10,6 +10,19 @@ from app.scanner.dsl import DSLError
 router = APIRouter(prefix="/api/backtest", tags=["backtest"])
 
 EXAMPLES = [
+    # ⭐ Doğrulanmış edge'ler (combo_search + zamansal OOS + walk-forward'dan geçen keeper'lar)
+    {"name": "Combo1 · SMA+Fisher+VWAP", "tag": "edge",
+     "desc": "trend+momentum+hacim, long-only · all-weather · canlı sleeve (8091/8094)",
+     "entry": "Close > SMA(50) AND FisherTransform(9).Fisher > FisherTransform(9).Trigger AND Close > VWAP",
+     "exit": "Close < SMA(50) OR FisherTransform(9).Fisher < FisherTransform(9).Trigger OR Close < VWAP"},
+    {"name": "Combo2 · Fisher+Force+Awesome", "tag": "edge",
+     "desc": "momentum üçlüsü, agresif-boğa · OOS şampiyon",
+     "entry": "FisherTransform(9).Fisher > FisherTransform(9).Trigger AND ForceIndex(13) > 0 AND AwesomeOsc(5,34) > 0",
+     "exit": "FisherTransform(9).Fisher < FisherTransform(9).Trigger OR ForceIndex(13) < 0 OR AwesomeOsc(5,34) < 0"},
+    {"name": "ZLEMA + Awesome", "tag": "edge",
+     "desc": "yapısal arama en iyi trend+momentum ikilisi (OOS)",
+     "entry": "Close > ZLEMA(20) AND AwesomeOsc(5,34) > 0",
+     "exit": "Close < ZLEMA(20) OR AwesomeOsc(5,34) < 0"},
     {"name": "RSI ortalamaya dönüş",
      "entry": "RSI(14) < 30", "exit": "RSI(14) > 55"},
     {"name": "EMA kesişim trend",

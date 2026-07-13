@@ -10,10 +10,11 @@ from concurrent.futures import ThreadPoolExecutor
 from app.data import service
 from app.data.universe import get_universe
 from app.fundamentals.service import analyze as fundamental_analyze
+from app.fusion.edge import edge_score
 from app.fusion.technical import technical_score
 from app.sentiment.engine import get_sentiment
 
-DEFAULT_WEIGHTS = {"technical": 0.40, "sentiment": 0.25, "fundamental": 0.35}
+DEFAULT_WEIGHTS = {"technical": 0.32, "sentiment": 0.20, "fundamental": 0.28, "edge": 0.20}
 
 
 def _signal(score: float) -> str:
@@ -36,6 +37,9 @@ def fuse(symbol: str, weights: dict | None = None, with_sentiment: bool = True,
     df = service.get_ohlcv(symbol, interval, range_)
     tech = technical_score(df)
 
+    # --- Edge (sistematik Combo1 sinyali) ---
+    edge = edge_score(df)
+
     # --- Temel ---
     fund = fundamental_analyze(symbol)
 
@@ -56,6 +60,8 @@ def fuse(symbol: str, weights: dict | None = None, with_sentiment: bool = True,
         parts["sentiment"] = 50 + 50 * sent_score
     if fund["score"] is not None:
         parts["fundamental"] = fund["score"]
+    if edge["score"] is not None:
+        parts["edge"] = edge["score"]
 
     if not parts:
         composite = None
@@ -75,6 +81,9 @@ def fuse(symbol: str, weights: dict | None = None, with_sentiment: bool = True,
             flag = "💪 Üç eksen uyumlu"
         elif sent_score > 0.15 and t < 45:
             flag = "↗ Haber olumlu ama teknik zayıf"
+    # edge tam sinyal + temel güçlü → yüksek-inanç
+    if not flag and edge["active"] and (fund["score"] or 50) >= 60:
+        flag = "🎯 Combo1 LONG + temel güçlü"
 
     return {
         "symbol": symbol, "name": fund.get("name") or symbol,
@@ -83,6 +92,8 @@ def fuse(symbol: str, weights: dict | None = None, with_sentiment: bool = True,
                       "label": sent_label, "n_news": sent_n},
         "fundamental": {"score": fund["score"], "label": fund["label"], "buckets": fund.get("buckets", {}),
                         "source": fund.get("source")},
+        "edge": {"score": edge["score"], "label": edge["label"], "active": edge["active"],
+                 "conditions": edge["conditions"]},
         "composite": composite, "signal": signal, "flag": flag,
         "weights": w,
     }
@@ -100,12 +111,12 @@ def fuse_group(group_id: str, weights: dict | None = None, with_sentiment: bool 
             return {
                 "symbol": sym, "name": r["name"],
                 "technical": r["technical"]["score"], "sentiment": r["sentiment"]["score"],
-                "fundamental": r["fundamental"]["score"], "composite": r["composite"],
-                "signal": r["signal"], "flag": r["flag"],
+                "fundamental": r["fundamental"]["score"], "edge": r["edge"]["score"],
+                "composite": r["composite"], "signal": r["signal"], "flag": r["flag"],
             }
         except Exception:
             return {"symbol": sym, "name": sym, "technical": None, "sentiment": 0,
-                    "fundamental": None, "composite": None, "signal": "HATA", "flag": ""}
+                    "fundamental": None, "edge": None, "composite": None, "signal": "HATA", "flag": ""}
 
     results = []
     with ThreadPoolExecutor(max_workers=max_workers) as ex:

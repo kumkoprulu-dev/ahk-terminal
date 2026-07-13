@@ -83,5 +83,9 @@ function switchToChart(symbol) {
   window.Fusion.init();
   window.Dashboard.init();
   window.Alarms.init();
+  window.Results.init();
+  window.EdgeLab.init();
+  window.Nnfx.init();
+  window.Canli.init();
   window.Chart.load(State.symbol);
 })();

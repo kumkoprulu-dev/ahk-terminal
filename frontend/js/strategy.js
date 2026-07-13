@@ -5,9 +5,14 @@
   async function init() {
     try {
       const ex = await API.get("/api/backtest/examples");
-      document.getElementById("bt-examples").innerHTML = ex.examples.map((e, i) =>
-        `<button class="ghost example" data-i="${i}">${e.name}<small>↳ ${e.entry}${e.exit ? " · ⤴ " + e.exit : ""}</small></button>`
-      ).join("");
+      const hasEdge = ex.examples.some((e) => e.tag === "edge");
+      document.getElementById("bt-examples").innerHTML =
+        (hasEdge ? `<div class="muted" style="font-size:11px;width:100%;margin-bottom:2px">⭐ Doğrulanmış edge'ler (OOS/walk-forward keeper) — tek tıkla yükle</div>` : "") +
+        ex.examples.map((e, i) => {
+          const edge = e.tag === "edge";
+          const desc = e.desc ? `<small class="ex-desc">${e.desc}</small>` : "";
+          return `<button class="ghost example${edge ? " ex-edge" : ""}" data-i="${i}" ${e.desc ? `title="${e.desc.replace(/"/g, "&quot;")}"` : ""}>${edge ? "⭐ " : ""}${e.name}${desc}<small>↳ ${e.entry}${e.exit ? " · ⤴ " + e.exit : ""}</small></button>`;
+        }).join("");
       document.querySelectorAll("#bt-examples .example").forEach((b) =>
         b.addEventListener("click", () => {
           const e = ex.examples[b.dataset.i];

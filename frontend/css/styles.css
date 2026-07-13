@@ -24,7 +24,8 @@ header {
 }
 header .logo { font-weight: 700; font-size: 16px; letter-spacing: .3px; }
 header .logo span { color: var(--accent); }
-.tabs { display: flex; gap: 6px; }
+.tabs { display: flex; gap: 6px; flex: 1 1 auto; min-width: 0; overflow-x: auto; flex-wrap: nowrap; scrollbar-width: thin; }
+.tabs .tab { flex: 0 0 auto; white-space: nowrap; }
 .tab {
   padding: 7px 16px; border-radius: 6px; cursor: pointer;
   color: var(--muted); background: transparent; border: none; font-size: 14px;
@@ -88,6 +89,8 @@ button.ghost:hover { border-color: var(--accent); }
 .examples { display: flex; flex-direction: column; gap: 6px; margin: 10px 0; }
 .example { text-align: left; font-size: 12px; padding: 8px 10px; color: var(--text); }
 .example small { color: var(--muted); display: block; font-family: monospace; margin-top: 2px; }
+.example.ex-edge { border-color: var(--accent, #2f81f7); background: rgba(47,129,247,.07); }
+.example small.ex-desc { color: var(--accent, #2f81f7); font-family: inherit; font-size: 11px; }
 .validate-msg { font-size: 12px; margin-top: 6px; min-height: 16px; }
 .ok { color: var(--green); } .err { color: var(--red); }
 

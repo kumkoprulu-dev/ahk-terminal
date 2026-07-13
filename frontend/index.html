@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>AHK Terminal</title>
-  <link rel="stylesheet" href="/static/css/styles.css?v=7" />
+  <link rel="stylesheet" href="/static/css/styles.css?v=9" />
   <script src="/static/vendor/lightweight-charts.js"></script>
 </head>
 <body>
@@ -21,6 +21,9 @@
       <button class="tab" data-view="sentiment">Sentiment</button>
       <button class="tab" data-view="fundamentals">Temel</button>
       <button class="tab" data-view="fusion">Füzyon</button>
+      <button class="tab" data-view="edgelab">Edge Lab</button>
+      <button class="tab" data-view="canli">Canlı</button>
+      <button class="tab" data-view="results">Sonuçlar</button>
     </nav>
     <div class="status" id="status">bağlanıyor…</div>
     <span id="live-dot" title="Canlı bağlanıyor…" style="color:#8b949e;font-size:11px">● CANLI</span>
@@ -198,17 +201,18 @@
     <section class="view" id="view-fusion">
       <div class="scan-layout">
         <div class="panel">
-          <h3>3'lü Füzyon Sinyali</h3>
-          <p class="muted" style="font-size:11px;margin:0 0 8px">Teknik + Haber + Temel → birleşik AL/SAT sinyali.</p>
+          <h3>4'lü Füzyon Sinyali</h3>
+          <p class="muted" style="font-size:11px;margin:0 0 8px">Teknik + Haber + Temel + <b>Edge</b> (Combo1) → birleşik AL/SAT sinyali.</p>
           <div class="param-row"><label>Grup</label><select id="fz-group"></select></div>
           <h3 style="margin-top:12px">Ağırlıklar</h3>
-          <div class="param-row"><label>Teknik</label><input id="fz-wt" type="number" value="0.40" step="0.05" min="0" max="1" style="flex:1" /></div>
-          <div class="param-row"><label>Haber</label><input id="fz-ws" type="number" value="0.25" step="0.05" min="0" max="1" style="flex:1" /></div>
-          <div class="param-row"><label>Temel</label><input id="fz-wf" type="number" value="0.35" step="0.05" min="0" max="1" style="flex:1" /></div>
+          <div class="param-row"><label>Teknik</label><input id="fz-wt" type="number" value="0.32" step="0.05" min="0" max="1" style="flex:1" /></div>
+          <div class="param-row"><label>Haber</label><input id="fz-ws" type="number" value="0.20" step="0.05" min="0" max="1" style="flex:1" /></div>
+          <div class="param-row"><label>Temel</label><input id="fz-wf" type="number" value="0.28" step="0.05" min="0" max="1" style="flex:1" /></div>
+          <div class="param-row"><label title="Combo1 (SMA+Fisher+VWAP) bull koşullarının sağlanma oranı">Edge</label><input id="fz-we" type="number" value="0.20" step="0.05" min="0" max="1" style="flex:1" /></div>
           <label class="param-row" style="margin-top:8px;cursor:pointer"><input type="checkbox" id="fz-sent" checked style="flex:none;width:auto" /> <span class="muted" style="font-size:12px">Haber analizini dahil et (yavaş)</span></label>
           <button class="primary" id="fz-run" style="width:100%;margin-top:10px">Füzyon Analizi</button>
           <div style="margin-top:12px;font-size:11px;line-height:1.6" class="muted">
-            <b>Kurallar:</b><br>💪 Üç eksen uyumlu → güçlü fırsat<br>⚠ Teknik olumlu + haber olumsuz → risk uyarısı<br>↗ Haber olumlu + teknik zayıf → erken sinyal
+            <b>Kurallar:</b><br>🎯 Combo1 LONG + temel güçlü → yüksek inanç<br>💪 Üç eksen uyumlu → güçlü fırsat<br>⚠ Teknik olumlu + haber olumsuz → risk uyarısı
           </div>
         </div>
         <div class="chart-col">
@@ -246,6 +250,25 @@
 
     <!-- ============ PORTFÖY ============ -->
     <section class="view" id="view-portfolio">
+      <div class="panel" style="padding:12px;margin-bottom:12px">
+        <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
+          <h3 style="margin:0">⚡ Edge Portföyleri</h3>
+          <select id="ep-mode" title="edge stratejisi"></select>
+          <select id="ep-universe" title="evren">
+            <option value="kripto">Kripto (15 major)</option>
+            <option value="bist30" selected>BIST 30</option>
+            <option value="bist50">BIST 50</option>
+            <option value="bist100">BIST 100</option>
+            <option value="nasdaq">NASDAQ</option>
+            <option value="emtia">Emtia</option>
+          </select>
+          <button class="primary" id="ep-run">Koştur</button>
+          <span class="muted" id="ep-meta" style="font-size:12px">Ürettiğimiz edge'leri (Combo1/Combo2/cross-sectional/3-kollu risk paritesi) sepet üzerinde koştur.</span>
+        </div>
+        <div id="ep-metrics" class="metrics-grid" style="margin-top:10px"></div>
+        <div id="ep-equity" style="margin-top:8px"></div>
+        <div id="ep-arms" style="margin-top:8px"></div>
+      </div>
       <div class="scan-layout">
         <div class="panel">
           <h3>Portföy Optimizasyonu</h3>
@@ -399,21 +422,147 @@
         </div>
       </div>
     </section>
+
+    <!-- ============ SONUÇLAR (kayıtlı backtest/tarama geçmişi) ============ -->
+    <section class="view" id="view-edgelab">
+      <div class="hero" style="padding:14px 18px">
+        <h1>Edge <span>Lab</span></h1>
+        <p>Sistematik kombo arama (combo_search) — sepetteki tüm göstergeleri tekli/ikili strateji olarak backtest edip semboller-arası ortalama Sharpe'a göre sıralar. Güçlü gösterge/kombo keşfinin motoru; buradan çıkan keeper'lar Strateji sekmesine preset olur.</p>
+      </div>
+      <div class="panel" style="padding:12px;margin-top:12px">
+        <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
+          <strong>Kombo Arama</strong>
+          <select id="el-level" title="arama seviyesi">
+            <option value="singles">Tekli gösterge (52, hızlı)</option>
+            <option value="pairs">İkili kombo (kategoriler-arası, yavaş)</option>
+          </select>
+          <select id="el-universe" title="evren">
+            <option value="kripto">Kripto (15 major)</option>
+            <option value="bist30" selected>BIST 30</option>
+            <option value="bist50">BIST 50</option>
+            <option value="bist100">BIST 100</option>
+            <option value="nasdaq">NASDAQ</option>
+            <option value="emtia">Emtia</option>
+          </select>
+          <label class="muted" style="font-size:12px">sepet <input id="el-basket" type="number" value="6" min="2" max="15" style="width:52px" /></label>
+          <label class="muted" style="font-size:12px">ilk <input id="el-top" type="number" value="20" min="5" max="60" style="width:52px" /></label>
+          <button class="primary" id="el-run">Tara</button>
+          <span class="muted" id="el-meta" style="font-size:12px">Seviye + evren seçip "Tara"ya basın (sepet küçük tutulur — hız için).</span>
+        </div>
+        <div id="el-results" style="margin-top:12px"></div>
+      </div>
+
+      <div class="panel" style="padding:12px;margin-top:12px">
+        <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
+          <strong>🧩 NNFX Yuva Arama</strong>
+          <select id="nx-interval" title="zaman dilimi">
+            <option value="1d" selected>Günlük (1d)</option>
+            <option value="4h">4 saat</option>
+            <option value="1h">1 saat</option>
+          </select>
+          <label class="muted" style="font-size:12px"><input id="nx-c2" type="checkbox" /> 2. confirmation (4 yuva, ağır)</label>
+          <label class="muted" style="font-size:12px">ilk <input id="nx-top" type="number" value="30" min="5" max="60" style="width:52px" /></label>
+          <button class="primary" id="nx-run">NNFX Ara</button>
+          <span class="muted" id="nx-meta" style="font-size:12px">DaviddTech/StrategyFactory kalıbı (Baseline+Confirmation+Volume+Noise) — sepette üret + OOS test (~3–4 dk).</span>
+        </div>
+        <div id="nx-noise" style="margin-top:8px"></div>
+        <div id="nx-results" style="margin-top:12px"></div>
+      </div>
+    </section>
+
+    <section class="view" id="view-canli">
+      <div class="hero" style="padding:14px 18px">
+        <h1>Canlı <span>Runner'lar</span></h1>
+        <p>Üç bağımsız edge sleeve'i (Kripto Combo1 · Kripto cross-sectional · BIST Combo1) paper olarak canlı çalışır; koordinatör risk-paritesiyle sermaye dağıtır. Buradan dağılımı hesapla + başlatma komutlarını al, canlı PnL'i izle.</p>
+      </div>
+      <div class="panel" style="padding:12px;margin-top:12px">
+        <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
+          <strong>🚀 Başlat — risk paritesi dağılımı</strong>
+          <label class="muted" style="font-size:12px">kripto <input id="cl-crypto" type="number" value="3000" style="width:80px" /> USDT</label>
+          <label class="muted" style="font-size:12px">BIST <input id="cl-bist" type="number" value="300000" style="width:90px" /> TRY</label>
+          <button class="primary" id="cl-alloc-btn">Hesapla</button>
+        </div>
+        <div id="cl-alloc" style="margin-top:10px"><div class="muted" style="font-size:13px">"Hesapla"ya basın — son veriden ters-vol (risk paritesi) ağırlıkları + hazır başlatma komutları üretilir (~30 sn).</div></div>
+      </div>
+      <div class="panel" style="padding:12px;margin-top:12px">
+        <div style="display:flex;gap:10px;align-items:center;justify-content:space-between;flex-wrap:wrap">
+          <strong>📡 İzle — canlı sleeve'ler</strong>
+          <div><span class="muted" style="font-size:12px">birleşik net PnL</span> <span id="cl-total" style="font-size:20px;font-weight:700;margin-left:6px">—</span></div>
+        </div>
+        <div id="cl-monitor" style="margin-top:8px"><div class="muted" style="font-size:13px">Runner'ları <code>--save-every</code> ile başlatın; canlı PnL burada belirir (7 sn'de bir yenilenir).</div></div>
+        <div class="muted" style="font-size:11px;margin-top:8px">Standalone panolar:
+          <a href="http://127.0.0.1:8091" target="_blank" style="color:var(--accent,#2f81f7)">Combo1 (8091)</a> ·
+          <a href="http://127.0.0.1:8093" target="_blank" style="color:var(--accent,#2f81f7)">xsec (8093)</a> ·
+          <a href="http://127.0.0.1:8094" target="_blank" style="color:var(--accent,#2f81f7)">BIST (8094)</a> ·
+          <a href="http://127.0.0.1:8095" target="_blank" style="color:var(--accent,#2f81f7)">koordinatör (8095)</a></div>
+      </div>
+    </section>
+
+    <section class="view" id="view-results">
+      <div class="hero" style="padding:14px 18px">
+        <h1>Kayıtlı <span>Sonuçlar</span></h1>
+        <p>Tüm backtest, tarama ve portföy çalıştırmalarının istatistikleri kalıcı veritabanına (results.sqlite) yazılır — program kapansa bile kaybolmaz. Scriptleri <code>backend/scripts</code> altından çalıştırdıkça bu liste otomatik büyür.</p>
+      </div>
+
+      <div class="panel" style="padding:12px;margin-top:12px">
+        <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
+          <strong>En iyi sonuçlar</strong>
+          <select id="rs-metric">
+            <option value="sharpe">Sharpe</option>
+            <option value="total_return">Toplam Getiri %</option>
+            <option value="cagr">CAGR %</option>
+            <option value="score">Skor</option>
+            <option value="profit_factor">Profit Factor</option>
+          </select>
+          <select id="rs-kind"><option value="">tüm türler</option></select>
+          <button class="ghost" id="rs-refresh">↻ Yenile</button>
+          <span class="muted" id="rs-status" style="font-size:12px"></span>
+        </div>
+        <div id="rs-top" style="margin-top:10px"></div>
+      </div>
+
+      <div class="panel" style="padding:12px;margin-top:12px">
+        <div style="display:flex;gap:10px;align-items:center;justify-content:space-between;flex-wrap:wrap">
+          <strong>🟢 Canlı runner'lar <span class="muted" style="font-weight:400;font-size:12px">(paper — live_snapshots)</span></strong>
+          <div>
+            <span class="muted" style="font-size:12px">birleşik net PnL</span>
+            <span id="rs-live-total" style="font-size:20px;font-weight:700;margin-left:6px">—</span>
+          </div>
+        </div>
+        <div id="rs-live" style="margin-top:8px"><div class="muted" style="font-size:13px">Bir runner'ı <code>--save-every</code> ile başlatın (ör. <code>run_bist_combo.py --dashboard</code>); anlık PnL burada belirir.</div></div>
+      </div>
+
+      <div class="split" style="display:grid;grid-template-columns:minmax(320px,1fr) minmax(360px,1.4fr);gap:12px;margin-top:12px">
+        <div class="panel" style="padding:12px">
+          <strong>Son çalıştırmalar</strong>
+          <div id="rs-runs" style="margin-top:8px"></div>
+        </div>
+        <div class="panel" style="padding:12px">
+          <strong id="rs-detail-title">Çalıştırma detayı</strong>
+          <div class="muted" id="rs-detail-meta" style="font-size:12px;margin:4px 0 8px"></div>
+          <div id="rs-detail">Soldan bir çalıştırma seçin.</div>
+        </div>
+      </div>
+    </section>
   </main>
 
   <script src="/static/js/auth.js?v=16"></script>
   <script src="/static/js/live.js?v=16"></script>
   <script src="/static/js/chart.js?v=16"></script>
   <script src="/static/js/scanner.js?v=16"></script>
-  <script src="/static/js/strategy.js?v=16"></script>
+  <script src="/static/js/strategy.js?v=17"></script>
   <script src="/static/js/optimize.js?v=16"></script>
   <script src="/static/js/walkforward.js?v=16"></script>
-  <script src="/static/js/portfolio.js?v=16"></script>
+  <script src="/static/js/portfolio.js?v=17"></script>
   <script src="/static/js/sentiment.js?v=16"></script>
   <script src="/static/js/dashboard.js?v=16"></script>
-  <script src="/static/js/fusion.js?v=16"></script>
+  <script src="/static/js/fusion.js?v=17"></script>
   <script src="/static/js/fundamentals.js?v=16"></script>
   <script src="/static/js/alarms.js?v=16"></script>
-  <script src="/static/js/app.js?v=16"></script>
+  <script src="/static/js/results.js?v=17"></script>
+  <script src="/static/js/edgelab.js?v=1"></script>
+  <script src="/static/js/nnfx.js?v=1"></script>
+  <script src="/static/js/canlive.js?v=1"></script>
+  <script src="/static/js/app.js?v=18"></script>
 </body>
 </html>

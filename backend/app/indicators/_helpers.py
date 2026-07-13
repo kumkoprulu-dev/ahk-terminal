@@ -48,6 +48,27 @@ def true_range(df: pd.DataFrame) -> pd.Series:
     return tr
 
 
+def smma(s: pd.Series, n: int) -> pd.Series:
+    """Smoothed MA (Wilder) — rma ile aynı; Alligator vb. için açık ad."""
+    return rma(s, int(n))
+
+
+def linreg_endpoint(s: pd.Series, n: int) -> pd.Series:
+    """Rolling doğrusal regresyon çizgisinin pencere-sonu değeri (LSMA)."""
+    n = int(n)
+    x = np.arange(n)
+    x_mean = x.mean()
+    denom = ((x - x_mean) ** 2).sum()
+
+    def _end(y: np.ndarray) -> float:
+        y_mean = y.mean()
+        slope = ((x - x_mean) * (y - y_mean)).sum() / denom
+        intercept = y_mean - slope * x_mean
+        return slope * (n - 1) + intercept  # son noktadaki regresyon değeri
+
+    return s.rolling(n).apply(_end, raw=True)
+
+
 def crossover(a: pd.Series, b: pd.Series) -> pd.Series:
     """a, b'yi yukarı kestiğinde True."""
     return (a > b) & (a.shift(1) <= b.shift(1))
